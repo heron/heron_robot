@@ -1,0 +1,81 @@
+#ifndef _ROS_std_msgs_Header_h
+#define _ROS_std_msgs_Header_h
+
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include "ros/msg.h"
+#include "ros/time.h"
+
+namespace std_msgs
+{
+
+  class Header : public ros::Msg
+  {
+    public:
+      uint32_t seq;
+      ros::Time stamp;
+      char * frame_id;
+
+    virtual int serialize(unsigned char *outbuffer) const
+    {
+      int offset = 0;
+      *(outbuffer + offset + 0) = (this->seq >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->seq >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->seq >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->seq >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->seq);
+      *(outbuffer + offset + 0) = (this->stamp.sec >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->stamp.sec >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->stamp.sec >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->stamp.sec >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->stamp.sec);
+      *(outbuffer + offset + 0) = (this->stamp.nsec >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->stamp.nsec >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->stamp.nsec >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->stamp.nsec >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->stamp.nsec);
+      uint32_t * length_frame_id = (uint32_t *)(outbuffer + offset);
+      *length_frame_id = strlen( (const char*) this->frame_id);
+      offset += 4;
+      memcpy(outbuffer + offset, this->frame_id, *length_frame_id);
+      offset += *length_frame_id;
+      return offset;
+    }
+
+    virtual int deserialize(unsigned char *inbuffer)
+    {
+      int offset = 0;
+      this->seq |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      this->seq |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->seq |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->seq |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      offset += sizeof(this->seq);
+      this->stamp.sec |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      this->stamp.sec |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->stamp.sec |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->stamp.sec |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      offset += sizeof(this->stamp.sec);
+      this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      offset += sizeof(this->stamp.nsec);
+      uint32_t length_frame_id = *(uint32_t *)(inbuffer + offset);
+      offset += 4;
+      for(unsigned int k= offset; k< offset+length_frame_id; ++k){
+          inbuffer[k-1]=inbuffer[k];
+      }
+      inbuffer[offset+length_frame_id-1]=0;
+      this->frame_id = (char *)(inbuffer + offset-1);
+      offset += length_frame_id;
+     return offset;
+    }
+
+    const char * getType(){ return "std_msgs/Header"; };
+    const char * getMD5(){ return "2176decaecbce78abc3b96ef049fabed"; };
+
+  };
+
+}
+#endif

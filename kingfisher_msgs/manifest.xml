@@ -1,0 +1,15 @@
+<package>
+  <description brief="kingfisher_msgs">
+
+     kingfisher_msgs
+
+  </description>
+  <author>james</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kingfisher_msgs</url>
+  <depend package="std_msgs"/>
+
+</package>
+
+
