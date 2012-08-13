@@ -28,6 +28,8 @@
 #define PULSE_NEUTRAL 1500
 #define PULSE_DELTA   1000
 
+#define RC_ROTATION_WEIGHT 0.5
+
 #define LOW_BAT_LEVEL 1.5 //Volts
 
 typedef enum {
@@ -84,7 +86,7 @@ void calcServoPulse() {
   if(digitalRead(RC_ENABLE_PIN)) {
     rc_mode_en = 1;
   } else {
-    //rc_mode_en = 0;
+    rc_mode_en = 0;
   }
   
   //Check for throtle change
@@ -103,8 +105,12 @@ void calcServoPulse() {
     rc_rot_start = 0;
   }
   if(rc_mode_en) {
-    right_servo.writeMicroseconds(rc_throt);
-    left_servo.writeMicroseconds(rc_rot);
+    //TODO: sign on rotation might be wrong double check
+    int16_t rot = rc_rot - PULSE_NEUTRAL;
+    uint16_t right_in = min(max(rc_throt+rc_rot*RC_ROTATION_WEIGHT, PULSE_NEUTRAL+PULSE_DELTA), PULSE_NEUTRAL-PULSE_DELTA);
+    uint16_t left_in = min(max(rc_throt-rc_rot*RC_ROTATION_WEIGHT, PULSE_NEUTRAL+PULSE_DELTA), PULSE_NEUTRAL-PULSE_DELTA);
+    right_servo.writeMicroseconds(right_in);
+    left_servo.writeMicroseconds(left_in);
   }
 }
 
@@ -136,10 +142,9 @@ void setup(){
   robo_state = STATE_STANDBY;
 
   //digital pin setup
-  //pinMode(LED_PIN, OUTPUT);
   pinMode(RIGHT_LIGHT, OUTPUT);
   pinMode(LEFT_LIGHT, OUTPUT);
-  pinMode(RC_ENABLE_PIN, OUTPUT); //hack for now to get ground 
+  pinMode(RC_ENABLE_PIN, OUTPUT); 
   digitalWrite(RC_ENABLE_PIN, LOW);
   analogReference(INTERNAL);
   pinMode(BATTERY_SENSE, INPUT);
