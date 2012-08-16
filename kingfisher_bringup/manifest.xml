@@ -1,0 +1,16 @@
+<package>
+  <description brief="kingfisher_bringup">
+
+     kingfisher_bringup
+
+  </description>
+  <author>Mike Purvis</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kingfisher_bringup</url>
+  <depend package="kingfisher_msgs"/>
+  <depend package="rosserial_python"/>
+
+</package>
+
+

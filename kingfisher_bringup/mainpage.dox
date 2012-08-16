@@ -2,7 +2,7 @@
 \mainpage
 \htmlinclude manifest.html
 
-\b kingfisher_msgs 
+\b kingfisher_bringup 
 
 <!-- 
 Provide an overview of your package.
