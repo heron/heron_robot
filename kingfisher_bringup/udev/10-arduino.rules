@@ -1,0 +1,3 @@
+# First is blank device
+SUBSYSTEMS=="usb", ATTRS{product}=="AVR*", SYMLINK+="arduino", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{product}=="Arduino*", SYMLINK+="arduino", MODE="0666"
