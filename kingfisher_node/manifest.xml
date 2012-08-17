@@ -1,0 +1,17 @@
+<package>
+  <description brief="kingfisher_node">
+
+     kingfisher_node
+
+  </description>
+  <author>Mike Purvis</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kingfisher_node</url>
+  <depend package="rospy"/>
+  <depend package="rosserial_python"/>
+  <depend package="kingfisher_msgs"/>
+
+</package>
+
+
