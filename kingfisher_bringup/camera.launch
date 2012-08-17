@@ -1,0 +1,24 @@
+<launch>
+
+  <param name="/camera/image_color/compressed/jpeg_quality" value="10"/>
+
+  <!-- nodelet manager process -->
+  <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager"
+        args="manager" />
+
+  <!-- camera driver nodelet -->
+  <node pkg="nodelet" type="nodelet" name="camera1394_nodelet"
+        args="load camera1394/driver camera_nodelet_manager">
+        <rosparam file="$(find kingfisher_bringup)/config/ffmv.yaml" />
+  </node>
+    
+  <!-- Bayer color decoding -->
+  <node pkg="nodelet" type="nodelet" name="image_proc_debayer"
+        args="load image_proc/debayer camera_nodelet_manager">
+    <param name="bayer_pattern" value="rggb" />
+    <param name="bayer_method" value="" />
+    <remap from="image_color" to="camera/image_color" />
+    <remap from="image_mono" to="camera/image_mono" />
+    <remap from="image_raw" to="camera/image_raw" />
+  </node>
+</launch>
