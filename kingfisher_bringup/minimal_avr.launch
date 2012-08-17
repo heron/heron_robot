@@ -1,3 +1,3 @@
 <launch>
-  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_chameleon" args="/dev/arduino" />
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial" args="/dev/arduino" />
 </launch>
