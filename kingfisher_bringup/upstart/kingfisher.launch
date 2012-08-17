@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- sample file, copy this to /etc/ros/electric/kingfisher.launch -->
+
+  <param name="kingfisher_node/gyro_scale_correction" value="1.0"/>
+  <param name="kingfisher_node/odom_angular_scale_correction" value="1.0"/>
+
+  <include file="$(find kingfisher_bringup)/minimal.launch">
+    <arg name="urdf_file" value="$(find xacro)/xacro.py '$(find kingfisher_description)/robots/kingfisher.urdf.xacro'" />
+  </include>
+
+</launch>
