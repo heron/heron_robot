@@ -4,12 +4,20 @@
      kingfisher_bringup
 
   </description>
-  <author>Mike Purvis</author>
+  <author>Mike Purvis, Ryan Gariepy</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/kingfisher_bringup</url>
   <depend package="kingfisher_msgs"/>
   <depend package="rosserial_python"/>
+
+  <!-- for apps -->
+  <depend package="app_manager"/>
+
+  <!-- for video teleoperation -->
+  <depend package="camera1394"/>
+  <depend package="image_proc"/>
+  <depend package="compressed_image_transport"/>
 
 </package>
 

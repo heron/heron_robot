@@ -1,0 +1,3 @@
+apps:
+ - display: Android Teleop
+   app: kingfisher_teleop/android_teleop

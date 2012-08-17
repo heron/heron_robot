@@ -1,0 +1,2 @@
+# udev rules file for Point Grey Firefly-MV
+SUBSYSTEM=="usb", ATTR{idVendor}=="1e10", SYSFS{idProduct}=="2000", GROUP="plugdev", MODE:="0666", SYMLINK+="firefly"
