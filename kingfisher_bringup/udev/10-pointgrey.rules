@@ -1,2 +1,4 @@
 # udev rules file for Point Grey Firefly-MV
-SUBSYSTEM=="usb", ATTR{idVendor}=="1e10", SYSFS{idProduct}=="2000", GROUP="plugdev", MODE:="0666", SYMLINK+="firefly"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1e10", ATTRS{idProduct}=="2000", GROUP="plugdev", SYMLINK+="firefly"
+# udev rules file for Point Grey Chameleon 
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1e10", ATTRS{idProduct}=="2004", GROUP="plugdev", SYMLINK+="chameleon"
