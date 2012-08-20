@@ -55,7 +55,7 @@ if ! id -u kingfisher >/dev/null 2>&1; then
     fi
 fi
 
-cp $stackPath/52-kingfisher.rules /etc/udev/rules.d/
+# cp $stackPath/52-kingfisher.rules /etc/udev/rules.d/
 
 source /opt/ros/$release/setup.bash
 

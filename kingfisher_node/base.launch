@@ -2,6 +2,7 @@
   <!-- TODO: Pass an arg here for launching AVR v. CM3 -->
 
   <arg name="port" default="/dev/arduino" />
-  <node pkg="rosserial_python" type="serial_node.py" name="kingfisher_rosserial" args="$(arg port)" />
+  <node pkg="rosserial_python" type="serial_node.py" name="kingfisher_rosserial"
+        args="$(arg port)" respawn="true" />
   <node pkg="kingfisher_node" type="kingfisher.py" name="kingfisher" />
 </launch>

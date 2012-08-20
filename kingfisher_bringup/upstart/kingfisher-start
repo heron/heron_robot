@@ -15,7 +15,10 @@ fi
 interface=wlan0
 echo "$DATE: kingfisher-start on interface $interface" >> $log_file
 
+# export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/administrator/
 export ROS_IP=`ifconfig $interface | grep -o 'inet addr:[^ ]*' | cut -d: -f2`
+export ROS_MASTER_URI=http://$ROS_IP:11311
+export ROS_LOG_DIR=/tmp
 
 echo "$DATE: kingfisher-start setting ROS_IP=$ROS_IP" >> $log_file
 
