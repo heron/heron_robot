@@ -1,0 +1,8 @@
+local_service_names: []
+local_pub_names:
+ - cmd_vel
+ - cmd_drive
+foreign_service_names: []
+foreign_pub_names:
+ - sense
+ - cmd_drive

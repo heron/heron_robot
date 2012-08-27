@@ -3,42 +3,19 @@
 # Run this as root, from the directory containing it!
 #
 # USAGE: sudo ./install.bash
-#  or
-# sudo ./install.bash usb0
-#  or
-# sudo ./install.bash usb0 fuerte
 #
-# where usb0 is whatever network interface you want to set the robot
-# up for.
-# and fuerte is the specified version of ROS to use.
-# Default is the latest installed.
 
-interface=$(iwconfig 2>/dev/null | awk '{print $1}' | head -n1)
-
-#stackPath=/opt/ros/fuerte/stacks/kingfisher/kingfisher_bringup/upstart
 stackPath=./
 
-if [ $# -gt 0 ]; then
-    if [ "$1" != "" ]; then
-        interface=$1
-    fi
-fi
-
+robot=kingfisher
+core_netif=eth1
+interface_netif=wlan0
 release=$(ls /opt/ros/ | tail -n1)
 
-if [ $# -gt 1 ]; then
-    if [ "$2" != "" ]; then
-        release=$2
-    fi
-fi
-
-
 source /opt/ros/$release/setup.bash
-OLD_DIR=$(pwd)
-cd `rospack find kingfisher_bringup`/upstart
+pushd `rospack find kingfisher_bringup`/upstart
 
 # checks if kingfisher user+group exists, if it doesn't, then it creates a kingfisher daemon.
-
 if ! grep "^kingfisher:" /etc/group >/dev/null 2>&1; then
     echo "Group kingfisher does not exist, creating."
     groupadd kingfisher
@@ -49,29 +26,49 @@ if ! id -u kingfisher >/dev/null 2>&1; then
     useradd -g kingfisher kingfisher
     usermod kingfisher -G sudo
     if [ ! -e /home/kingfisher ]; then
-        echo "Turtlebot home directory was not created, creating."
+        echo "Kingfisher home directory was not created, creating."
         mkdir /home/kingfisher
         chown kingfisher:kingfisher /home/kingfisher
     fi
 fi
 
-# cp $stackPath/52-kingfisher.rules /etc/udev/rules.d/
+cp `rospack find ${robot}_bringup`/udev/* /etc/udev/rules.d/
 
 source /opt/ros/$release/setup.bash
 
-echo "Installing using network interface $interface."
+function do_subs {
+  # source file, dest file, interface, robot, job, release
+  cp $1 $2
+  sed -i "s/interface0/$3/g" $2
+  sed -i "s/robot/$4/g" $2
+  sed -i "s/job/$5/g" $2
+  sed -i "s/release/$6/g" $2 
+}
 
-sed "s/wlan0/$interface/g" < $stackPath/kingfisher-start | sed "s/release/$release/"g > /usr/sbin/kingfisher-start
-chmod +x /usr/sbin/kingfisher-start
-sed "s/wlan0/$interface/g" < $stackPath/kingfisher-stop | sed "s/release/$release/"g > /usr/sbin/kingfisher-stop
-chmod +x /usr/sbin/kingfisher-stop
-sed "s/wlan0/$interface/g" < $stackPath/kingfisher.conf > /etc/init/kingfisher.conf
+function install_job {
+  job=$1
+  interface=$2
+  echo "Installing $robot-$job using network interface $interface."
 
-# Copy files into /etc/ros/$release/kingfisher
-mkdir -p /etc/ros
-mkdir -p /etc/ros/$release
-cat $stackPath/kingfisher.launch > /etc/ros/$release/kingfisher.launch
+  do_subs $stackPath/start /usr/sbin/$robot-$job-start $interface $robot $job $release
+  chmod +x /usr/sbin/$robot-$job-start
+
+  do_subs $stackPath/stop /usr/sbin/$robot-$job-stop $interface $robot $job $release
+  chmod +x /usr/sbin/$robot-$job-stop
+
+  do_subs $stackPath/job.conf /etc/init/$robot-$job.conf $interface $robot $job $release
+
+  # Copy launch files into /etc/ros/
+  launch_path=/etc/ros/$release/$robot/$job.d
+  mkdir -p $launch_path 
+  cp `rospack find ${robot}_bringup`/launch/$job/* > $launch_path
+}
+
+# substitutions: interface0, robot, job, release
+install_job core $core_netif
+
+
 
 echo ". /opt/ros/$release/setup.bash;" > /etc/ros/setup.bash
 
-cd $OLD_DIR
+popd

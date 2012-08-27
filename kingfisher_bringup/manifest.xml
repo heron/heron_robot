@@ -11,7 +11,7 @@
   <depend package="kingfisher_msgs"/>
   <depend package="rosserial_python"/>
 
-  <!-- for apps -->
+  <!-- for apps and sync -->
   <depend package="app_manager"/>
 
   <!-- for video teleoperation -->

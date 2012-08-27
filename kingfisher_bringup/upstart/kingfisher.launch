@@ -1,4 +1,0 @@
-<launch>
-  <include file="$(find kingfisher_bringup)/minimal.launch">
-  </include>
-</launch>

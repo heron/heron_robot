@@ -1,0 +1,17 @@
+#!/usr/bin/python
+
+import roslib; roslib.load_manifest('kingfisher_bringup')
+
+import rospy
+
+from app_manager.master_sync import MasterSync
+
+rospy.init_node('sync')
+interface = rospy.get_param('~interface')
+master_uri = rospy.get_param('~master_uri')
+
+#print interface
+s = MasterSync(foreign_master=master_uri, **interface)
+
+while not rospy.is_shutdown():
+  s.spin()

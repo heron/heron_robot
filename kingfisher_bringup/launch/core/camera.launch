@@ -1,5 +1,4 @@
 <launch>
-
   <param name="/camera/image_color/compressed/jpeg_quality" value="60"/>
 
   <!-- nodelet manager process -->
@@ -16,8 +15,8 @@
   <node pkg="nodelet" type="nodelet" name="image_proc_rectify"
         args="load image_proc/crop_decimate camera_nodelet_manager">
     <remap from="camera_out/image_raw" to="camera/image_dec" />
-    <param name="decimation_x" value="4"/>
-    <param name="decimation_y" value="4"/>
+    <param name="decimation_x" value="6"/>
+    <param name="decimation_y" value="6"/>
   </node>
     
   <!-- dewarp (broken) -->
