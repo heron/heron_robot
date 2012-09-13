@@ -1,4 +1,1 @@
-clearpath_work
-==============
-
-Various projects for clearpath
+Baseline packages for Kingfisher, to be part of the boat, desktop, and simulation/workstation workspaces.
