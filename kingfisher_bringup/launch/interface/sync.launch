@@ -1,6 +1,6 @@
 <launch>
   <node type="sync" name="sync" pkg="kingfisher_bringup" output="screen">
-    <rosparam ns="master_uri" file="http://localhost:11311" />
+    <param name="master_uri" value="http://localhost:11310" />
     <rosparam ns="interface" file="$(find kingfisher_bringup)/interface.yaml" />
   </node>
 </launch>

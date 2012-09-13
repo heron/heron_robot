@@ -5,4 +5,7 @@ local_pub_names:
 foreign_service_names: []
 foreign_pub_names:
  - sense
+ - gps/fix
+ - gps/vel
+ - camera/image_color/compressed_throttle
  - cmd_drive
