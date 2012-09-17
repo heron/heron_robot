@@ -1,0 +1,7 @@
+<launch>
+    <node ns="zeroconf" pkg="zeroconf_avahi" type="zeroconf" name="zeroconf"  output="screen">
+        <rosparam> 
+            services: [ { name: "Kingfisher", type: _ros-master._tcp, domain: local, description: "roscore" } ]
+        </rosparam>
+    </node>
+</launch>

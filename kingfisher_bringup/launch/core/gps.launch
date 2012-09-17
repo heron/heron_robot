@@ -1,5 +1,10 @@
 <launch>
-  <node pkg="gpsd_client" type="gpsd_client" name="gpsd_client">
+  <!-- <node pkg="gpsd_client" type="gpsd_client" name="gpsd_client">
     <param name="use_gps_time" value="false" />
-  </node> 
+  </node> -->
+  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps">
+    <param name="port" value="/dev/ublox" />
+    <param name="baud" value="9600" />
+    <param name="useRMC" value="true" />
+  </node>
 </launch>

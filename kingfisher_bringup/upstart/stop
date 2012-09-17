@@ -4,9 +4,9 @@
 
 log_file=/tmp/robot-upstart.log
 DATE=`date`
-echo "$DATE: robot launchfile stop" >> $log_file
+echo "$DATE: robot job stop" >> $log_file
 
-echo "$DATE: robot launchfile using setup file /etc/ros/setup.bash" >> $log_file
+# echo "$DATE: robot job using setup file /etc/ros/setup.bash" >> $log_file
 # source /etc/ros/setup.bash
 
 # for i in $( rosnode list ); do

@@ -8,12 +8,10 @@
 stackPath=./
 
 robot=kingfisher
-core_netif=eth1
-interface_netif=wlan0
 release=$(ls /opt/ros/ | tail -n1)
 
 source /opt/ros/$release/setup.bash
-pushd `rospack find kingfisher_bringup`/upstart
+pushd `rospack find kingfisher_bringup`/upstart > /dev/null
 
 # checks if kingfisher user+group exists, if it doesn't, then it creates a kingfisher daemon.
 if ! grep "^kingfisher:" /etc/group >/dev/null 2>&1; then
@@ -40,35 +38,38 @@ function do_subs {
   # source file, dest file, interface, robot, job, release
   cp $1 $2
   sed -i "s/interface0/$3/g" $2
-  sed -i "s/robot/$4/g" $2
-  sed -i "s/job/$5/g" $2
-  sed -i "s/release/$6/g" $2 
+  sed -i "s/portnum/$4/g" $2
+  sed -i "s/robot/$5/g" $2
+  sed -i "s/job/$6/g" $2
+  sed -i "s/release/$7/g" $2 
 }
 
 function install_job {
   job=$1
   interface=$2
-  echo "Installing $robot-$job using network interface $interface."
+  portnum=$3
 
-  do_subs $stackPath/start /usr/sbin/$robot-$job-start $interface $robot $job $release
+  echo "Installing $robot-$job using network interface $interface, port $portnum."
+  
+  cp $stackPath/mklaunch /usr/sbin/mklaunch
+  do_subs $stackPath/start /usr/sbin/$robot-$job-start $interface $portnum $robot $job $release
   chmod +x /usr/sbin/$robot-$job-start
 
-  do_subs $stackPath/stop /usr/sbin/$robot-$job-stop $interface $robot $job $release
+  do_subs $stackPath/stop /usr/sbin/$robot-$job-stop $interface $portnum $robot $job $release
   chmod +x /usr/sbin/$robot-$job-stop
 
-  do_subs $stackPath/job.conf /etc/init/$robot-$job.conf $interface $robot $job $release
+  do_subs $stackPath/job.conf /etc/init/$robot-$job.conf $interface $portnum $robot $job $release
 
   # Copy launch files into /etc/ros/
   launch_path=/etc/ros/$release/$robot/$job.d
   mkdir -p $launch_path 
-  cp `rospack find ${robot}_bringup`/launch/$job/* > $launch_path
+  cp `rospack find ${robot}_bringup`/launch/$job/* $launch_path
 }
 
 # substitutions: interface0, robot, job, release
-install_job core $core_netif
-
-
+install_job core eth1 11310
+install_job interface wlan0 11311
 
 echo ". /opt/ros/$release/setup.bash;" > /etc/ros/setup.bash
 
-popd
+popd > /dev/null
