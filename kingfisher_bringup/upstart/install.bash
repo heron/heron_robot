@@ -8,26 +8,18 @@
 stackPath=./
 
 robot=kingfisher
+user=administrator
 release=$(ls /opt/ros/ | tail -n1)
 
 source /opt/ros/$release/setup.bash
-pushd `rospack find kingfisher_bringup`/upstart > /dev/null
+pushd `rospack find ${robot}_bringup`/upstart > /dev/null
 
-# checks if kingfisher user+group exists, if it doesn't, then it creates a kingfisher daemon.
-if ! grep "^kingfisher:" /etc/group >/dev/null 2>&1; then
-    echo "Group kingfisher does not exist, creating."
-    groupadd kingfisher
-fi
+# checks if kingfisher user exists, if it doesn't, then it creates a kingfisher daemon.
 
-if ! id -u kingfisher >/dev/null 2>&1; then
-    echo "User kingfisher does not exist, creating and adding it to groups kingfisher and sudo."
-    useradd -g kingfisher kingfisher
-    usermod kingfisher -G sudo
-    if [ ! -e /home/kingfisher ]; then
-        echo "Kingfisher home directory was not created, creating."
-        mkdir /home/kingfisher
-        chown kingfisher:kingfisher /home/kingfisher
-    fi
+if ! id -u ${user} >/dev/null 2>&1; then
+    echo "User ${user} does not exist, creating and adding it to sudo."
+    useradd -g ${user} ${user} 
+    usermod ${user} -G sudo
 fi
 
 cp `rospack find ${robot}_bringup`/udev/* /etc/udev/rules.d/
@@ -42,6 +34,7 @@ function do_subs {
   sed -i "s/robot/$5/g" $2
   sed -i "s/job/$6/g" $2
   sed -i "s/release/$7/g" $2 
+  sed -i "s/user/$8/g" $2 
 }
 
 function install_job {
@@ -52,13 +45,13 @@ function install_job {
   echo "Installing $robot-$job using network interface $interface, port $portnum."
   
   cp $stackPath/mklaunch /usr/sbin/mklaunch
-  do_subs $stackPath/start /usr/sbin/$robot-$job-start $interface $portnum $robot $job $release
+  do_subs $stackPath/start /usr/sbin/$robot-$job-start $interface $portnum $robot $job $release $user
   chmod +x /usr/sbin/$robot-$job-start
 
-  do_subs $stackPath/stop /usr/sbin/$robot-$job-stop $interface $portnum $robot $job $release
+  do_subs $stackPath/stop /usr/sbin/$robot-$job-stop $interface $portnum $robot $job $release $user
   chmod +x /usr/sbin/$robot-$job-stop
 
-  do_subs $stackPath/job.conf /etc/init/$robot-$job.conf $interface $portnum $robot $job $release
+  do_subs $stackPath/job.conf /etc/init/$robot-$job.conf $interface $portnum $robot $job $release $user
 
   # Copy launch files into /etc/ros/
   launch_path=/etc/ros/$release/$robot/$job.d
