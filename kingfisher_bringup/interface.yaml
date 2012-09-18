@@ -7,5 +7,5 @@ foreign_pub_names:
  - sense
  - gps/fix
  - gps/vel
- - camera/image_color/compressed_throttle
+ - camera/image_color/compressed
  - cmd_drive
