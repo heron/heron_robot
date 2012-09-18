@@ -9,3 +9,4 @@ foreign_pub_names:
  - gps/vel
  - camera/image_color/compressed
  - cmd_drive
+ - imu/data

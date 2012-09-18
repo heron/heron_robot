@@ -11,20 +11,13 @@ robot=kingfisher
 user=administrator
 release=$(ls /opt/ros/ | tail -n1)
 
-source /opt/ros/$release/setup.bash
+ln -s /home/${user}/ros/setup.bash /etc/ros/setup.bash
+source /etc/ros/setup.bash
 pushd `rospack find ${robot}_bringup`/upstart > /dev/null
 
-# checks if kingfisher user exists, if it doesn't, then it creates a kingfisher daemon.
-
-if ! id -u ${user} >/dev/null 2>&1; then
-    echo "User ${user} does not exist, creating and adding it to sudo."
-    useradd -g ${user} ${user} 
-    usermod ${user} -G sudo
-fi
-
+# Copy udev rules and udev helper to the usual spots
 cp `rospack find ${robot}_bringup`/udev/* /etc/udev/rules.d/
-
-source /opt/ros/$release/setup.bash
+cp `rospack find ${robot}_bringup`/bin/clearpath-name /usr/sbin/
 
 function do_subs {
   # source file, dest file, interface, robot, job, release
@@ -60,9 +53,7 @@ function install_job {
 }
 
 # substitutions: interface0, robot, job, release
-install_job core eth1 11310
+install_job core eth0 11310
 install_job interface wlan0 11311
-
-echo ". /opt/ros/$release/setup.bash;" > /etc/ros/setup.bash
 
 popd > /dev/null
