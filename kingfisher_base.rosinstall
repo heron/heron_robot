@@ -4,3 +4,4 @@
 - setup-file: {local-name: /opt/ros/fuerte/setup.sh}
 - git: {local-name: kingfisher, uri: 'https://github.com/clearpathrobotics/kingfisher.git'}
 - git: {local-name: kingfisher_apps, uri: 'https://github.com/clearpathrobotics/kingfisher_apps.git'}
+- git: {local-name: imu_um6, uri: 'https://github.com/clearpathrobotics/imu_um6.git'}
