@@ -1,9 +1,16 @@
 <launch>
-  <!-- <node pkg="gpsd_client" type="gpsd_client" name="gpsd_client">
-    <param name="use_gps_time" value="false" />
-  </node> -->
+  <!-- Port splitter -->
+  <node pkg="kingfisher_bringup" type="vserial" name="ublox_splitter"
+        args="--service serial:/dev/ublox,19200
+              --client /tmp/ublox_cfg /tmp/ublox_ros /tmp/ublox_user" />
+
+  <!-- Load ublox configuration -->
+  <node pkg="kingfisher_bringup" type="config_ublox" name="config_ublox" 
+        args="/tmp/ublox_cfg $(find kingfisher_bringup)/config/ublox.hex" />
+
+  <!-- Start NMEA GPS driver -->
   <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps">
-    <param name="port" value="/dev/ublox" />
+    <param name="port" value="/tmp/ublox_ros" />
     <param name="baud" value="9600" />
     <param name="useRMC" value="true" />
   </node>

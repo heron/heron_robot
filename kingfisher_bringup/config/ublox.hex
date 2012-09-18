@@ -1,0 +1,8 @@
+# UBX-CFG-RATE
+# set measurement period to 200ms (5hz)
+B5 62 06 08 06 00 C8 00 01 00 01 00 DE 6A
+
+# UBX-CFG-NMEA
+# permit COG output even if COG frozen
+# disable compatibility and consideration modes
+B5 62 06 17 04 00 20 23 00 00 64 D2
