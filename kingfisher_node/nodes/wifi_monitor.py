@@ -13,15 +13,9 @@ r = rospy.Rate(1)
 pub = rospy.Publisher('has_wifi', Bool)
 
 while not rospy.is_shutdown():
-  try:
-    wifi_str = check_output(['ifconfig', 'wlan0']);
-    if "inet addr" in wifi_str:
-      pub.publish(True)
-    else:
-      pub.publish(False)
-    r.sleep()
-    continue 
-  except:
-    print "foo"
-    # Try again.
-    raise #pass
+  wifi_str = check_output(['ifconfig', 'wlan0']);
+  if "inet addr" in wifi_str:
+    pub.publish(True)
+  else:
+    pub.publish(False)
+  r.sleep()
