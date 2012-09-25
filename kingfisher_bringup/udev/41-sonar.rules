@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", ATTRS{product}=="UC232R", MODE="0666", SYMLINK+="sonar"
