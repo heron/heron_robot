@@ -9,7 +9,7 @@
         args="/tmp/ublox_cfg $(find kingfisher_bringup)/config/ublox.hex" />
 
   <!-- Start NMEA GPS driver -->
-  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps">
+  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps" respawn="true">
     <param name="port" value="/tmp/ublox_ros" />
     <param name="baud" value="9600" />
     <param name="useRMC" value="true" />
