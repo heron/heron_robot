@@ -6,3 +6,8 @@ B5 62 06 08 06 00 C8 00 01 00 01 00 DE 6A
 # permit COG output even if COG frozen
 # disable compatibility and consideration modes
 B5 62 06 17 04 00 20 23 00 00 64 D2
+
+# UBX-CFG-CFG
+# save configuration to flash memory.
+B5 62 06 09 0D 00 00 00 00 00 FF FF
+00 00 00 00 00 00 03 1D AB

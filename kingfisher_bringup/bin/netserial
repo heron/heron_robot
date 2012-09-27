@@ -1,0 +1,5 @@
+#!/bin/bash
+# usage: net_serial tcp_port serial_port serial_baud
+sleep 1s
+
+socat tcp-l:$1,reuseaddr,fork $2,raw,b$3,echo=0,ocrnl=1

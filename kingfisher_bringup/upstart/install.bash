@@ -57,4 +57,13 @@ function install_job {
 install_job core eth0 11310
 install_job interface wlan0 11311
 
+# Configure ublox GPS.
+ublox_hex=`rospack find ${robot}_bringup`/config/ublox.hex
+if [ -e /dev/ublox ]; then
+  echo "Attempting to configure ublox GPS."
+  sed '/^\#/d' $ublox_hex | xxd -r -p > /dev/ublox
+else
+  echo "Can't find ublox GPS to configure it. Please replug it and rerun this script."
+fi
+
 popd > /dev/null
