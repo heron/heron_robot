@@ -5,5 +5,6 @@
   <node pkg="rosserial_python" type="serial_node.py" name="kingfisher_rosserial"
         args="$(arg port)" respawn="true" />
   <node pkg="kingfisher_node" type="kingfisher.py" name="kingfisher" />
+  <node pkg="kingfisher_node" type="wifi_monitor.py" name="wifi_monitor" respawn="true" />
   <node pkg="rostopic" type="rostopic" name="cmd_vel_shim" args="echo cmd_vel" />
 </launch>

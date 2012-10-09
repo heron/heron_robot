@@ -3,3 +3,4 @@ msg_gen
 kingfisher_msgs/src/kingfisher_msgs
 *.pyc
 *.swp
+kingfisher_bringup/bin/vserial
