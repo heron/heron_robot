@@ -1,6 +1,5 @@
 
 function install_udev_rules {
-  robot=$1
   cp `rospack find ${robot}_bringup`/udev/* /etc/udev/rules.d/
   cp `rospack find ${robot}_bringup`/bin/clearpath-name /usr/sbin/
   service udev restart
