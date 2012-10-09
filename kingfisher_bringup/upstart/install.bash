@@ -8,7 +8,7 @@
 stackPath=./
 
 export robot=kingfisher
-export user=mikepurvis #administrator
+export user=administrator
 export release=$(ls /opt/ros/ | tail -n1)
 
 source helpers.bash
