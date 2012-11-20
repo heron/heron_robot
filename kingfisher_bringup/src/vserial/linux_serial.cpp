@@ -100,7 +100,10 @@ int SetupSerial(void* handle, int baudrate)
     if( (baudrate == 0) || (baudrate==115200) ) {
         cfsetispeed(&options, B115200);
         cfsetospeed(&options, B115200);
-    } else if( (baudrate=9600) ) {
+    } else if( (baudrate==57600) ) {
+        cfsetispeed(&options, B57600);
+        cfsetispeed(&options, B57600);
+    } else if( (baudrate==9600) ) {
         cfsetispeed(&options, B9600);
         cfsetispeed(&options, B9600);
     } else {
