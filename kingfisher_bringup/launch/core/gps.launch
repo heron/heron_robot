@@ -2,14 +2,10 @@
   <!-- Port splitter -->
   <node pkg="kingfisher_bringup" type="vserial" name="ublox_splitter"
         args="--service serial:/dev/ublox,19200
-              --client /tmp/ublox_cfg /tmp/ublox_ros /tmp/ublox_user" />
-
-  <!-- Load ublox configuration -->
-  <node pkg="kingfisher_bringup" type="config_ublox" name="config_ublox" 
-        args="/tmp/ublox_cfg $(find kingfisher_bringup)/config/ublox.hex" />
+              --client /tmp/ublox_ros /tmp/ublox_user" respawn="true" />
 
   <!-- Start NMEA GPS driver -->
-  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps">
+  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps" respawn="true">
     <param name="port" value="/tmp/ublox_ros" />
     <param name="baud" value="9600" />
     <param name="useRMC" value="true" />
