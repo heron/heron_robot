@@ -9,3 +9,7 @@ bool fan_on
 uint8 RC_INRANGE=1
 uint8 RC_INUSE=2
 uint8 rc
+
+uint16 rc_throttle
+uint16 rc_rotation
+uint16 rc_enable
