@@ -31,7 +31,7 @@
   <!-- Bayer color decoding -->
   <node pkg="nodelet" type="nodelet" name="image_proc_debayer"
         args="load image_proc/debayer camera_nodelet_manager">
-    <param name="bayer_pattern" value="rggb" />
+    <param name="bayer_pattern" value="gbrg" />
     <param name="bayer_method" value="" />
     <remap from="image_color" to="camera/image_color" />
     <remap from="image_mono" to="camera/image_mono" />
