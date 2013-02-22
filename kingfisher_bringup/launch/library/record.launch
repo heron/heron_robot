@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="rosbag" type="record" name="record_data" output="screen" args="-a -x /(camera|image)(.*) -o $(env HOME)/logs/data"/> 
+  <node pkg="rosbag" type="record" name="record_camera" output="screen" args="/camera/image_color/compressed -o $(env HOME)/logs/camera"/> 
+</launch>
