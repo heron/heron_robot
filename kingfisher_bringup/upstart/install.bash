@@ -13,6 +13,7 @@ export release=$(ls /opt/ros/ | tail -n1)
 
 source helpers.bash
 
+mkdir -p /etc/ros
 rm -f /etc/ros/setup.bash
 ln -s /home/${user}/ros/setup.bash /etc/ros/setup.bash
 source /etc/ros/setup.bash
