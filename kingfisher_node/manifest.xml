@@ -12,6 +12,7 @@
   <depend package="rosserial_python"/>
   <depend package="kingfisher_msgs"/>
   <depend package="std_msgs"/>
+  <depend package="dynamic_reconfigure"/>
 
 </package>
 
