@@ -2,6 +2,8 @@ build
 msg_gen
 *.pyc
 *.swp
+*.cfgc
 kingfisher_bringup/bin/vserial
 kingfisher_msgs/src/kingfisher_msgs
 kingfisher_node/src/kingfisher_node/cfg/
+kingfisher_node/cfg/cpp/

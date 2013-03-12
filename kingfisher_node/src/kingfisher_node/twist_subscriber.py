@@ -16,8 +16,6 @@ class TwistSubscriber:
         # self.speed_scale = rospy.get_param('~speed_scale', 1.0)
 
         self.cmd_pub = rospy.Publisher('cmd_drive', Drive)
-        self.rtpub = rospy.Publisher('reverse_time_ms', Float32)
-        #print "!!!!!!!!!!!!!!! ", self, self.reverse_time_pub
         rospy.Subscriber("cmd_vel", Twist, self.callback) 
 
         srv = Server(TwistConfig, self.reconfigure)
@@ -28,7 +26,6 @@ class TwistSubscriber:
         self.rev_speed_scale = config['rev_speed_scale']
         self.left_max = config['left_max']
         self.right_max = config['right_max']
-        self.rtpub.publish(Float32(config['brake_pulse_ms']))
         return config
 
     def callback(self, twist):
