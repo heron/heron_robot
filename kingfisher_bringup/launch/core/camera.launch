@@ -15,8 +15,8 @@
   <node pkg="nodelet" type="nodelet" name="image_proc_rectify"
         args="load image_proc/crop_decimate camera_nodelet_manager">
     <remap from="camera_out/image_raw" to="camera/image_dec" />
-    <param name="decimation_x" value="6"/>
-    <param name="decimation_y" value="6"/>
+    <param name="decimation_x" value="2"/>
+    <param name="decimation_y" value="2"/>
   </node>
     
   <!-- dewarp (broken) -->
@@ -31,7 +31,7 @@
   <!-- Bayer color decoding -->
   <node pkg="nodelet" type="nodelet" name="image_proc_debayer"
         args="load image_proc/debayer camera_nodelet_manager">
-    <param name="bayer_pattern" value="rggb" />
+    <param name="bayer_pattern" value="gbrg" />
     <param name="bayer_method" value="" />
     <remap from="image_color" to="camera/image_color" />
     <remap from="image_mono" to="camera/image_mono" />
