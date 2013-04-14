@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
         }
 
         /* Hold off a bit if there was no data to forward */
-        if( ! gotbyte ) usleep(100);
+        if( ! gotbyte ) usleep(500);
     }
 }
 
