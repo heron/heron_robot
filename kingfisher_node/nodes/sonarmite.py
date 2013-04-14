@@ -4,7 +4,7 @@ import roslib; roslib.load_manifest('kingfisher_node')
 import rospy
 
 from sensor_msgs.msg import Range
-import serial
+import serial, select
 
 ser = None
 
@@ -27,12 +27,12 @@ def serial_lines(ser, brk="\n"):
             yield msg
 
 if __name__ == '__main__':
-    global ser
+    #global ser
     rospy.init_node('sonarmite')
     range_pub = rospy.Publisher('depth', Range)
     range_msg = Range(radiation_type=Range.ULTRASOUND, 
                       field_of_view=0.26,
-                      min_range=0.1, 
+                      min_range=0.2, 
                       max_range=100.0)
     range_msg.header.frame_id = "sonar"
 
@@ -48,10 +48,10 @@ if __name__ == '__main__':
         while not rospy.is_shutdown(): 
             data = lines.next()
             try:
-                fields = re.split(" ", data)
+                fields = data.split()
                 range_msg.range = float(fields[1])
-                range_msg.header.timestamp = rospy.Time.now()
-                imu_pub.publish(imu_data)
+                range_msg.header.stamp = rospy.Time.now()
+                range_pub.publish(range_msg)
             except ValueError as e:
                 rospy.logerr(str(e))
                 continue
