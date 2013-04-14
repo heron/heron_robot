@@ -102,16 +102,16 @@ int SetupSerial(void* handle, int baudrate)
         cfsetospeed(&options, B115200);
     } else if( (baudrate==57600) ) {
         cfsetispeed(&options, B57600);
-        cfsetispeed(&options, B57600);
+        cfsetospeed(&options, B57600);
     } else if( (baudrate==38400) ) {
         cfsetispeed(&options, B38400);
-        cfsetispeed(&options, B38400);
+        cfsetospeed(&options, B38400);
     } else if( (baudrate==19200) ) {
         cfsetispeed(&options, B19200);
-        cfsetispeed(&options, B19200);
+        cfsetospeed(&options, B19200);
     } else if( (baudrate==9600) ) {
         cfsetispeed(&options, B9600);
-        cfsetispeed(&options, B9600);
+        cfsetospeed(&options, B9600);
     } else {
         // Requested baud not supported
         return -1;
