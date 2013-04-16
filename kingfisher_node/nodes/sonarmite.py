@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     port = rospy.get_param('~port', '/dev/ttyUSB0')
     baud = rospy.get_param('~baud', 9600)
-    quality_threshold = rospy.get_param('~quality_threshold', 70)
+    quality_threshold = rospy.get_param('~quality_threshold', 0.54)
     
     rospy.on_shutdown(_shutdown)
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
             try:
                 fields = data.split()
 
-                quality = float(fields[6])
+                quality = float(fields[6]) / 128.0
                 quality_pub.publish(quality)
 
                 if quality >= quality_threshold:
