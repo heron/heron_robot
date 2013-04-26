@@ -4,6 +4,7 @@ import roslib; roslib.load_manifest('kingfisher_node')
 import rospy
 
 from sensor_msgs.msg import Range
+from std_msgs.msg import Float32
 import serial, select
 
 ser = None
@@ -30,6 +31,7 @@ if __name__ == '__main__':
     #global ser
     rospy.init_node('sonarmite')
     range_pub = rospy.Publisher('depth', Range)
+    quality_pub = rospy.Publisher('quality', Float32)
     range_msg = Range(radiation_type=Range.ULTRASOUND, 
                       field_of_view=0.26,
                       min_range=0.2, 
@@ -38,6 +40,7 @@ if __name__ == '__main__':
 
     port = rospy.get_param('~port', '/dev/ttyUSB0')
     baud = rospy.get_param('~baud', 9600)
+    quality_threshold = rospy.get_param('~quality_threshold', 0.54)
     
     rospy.on_shutdown(_shutdown)
 
@@ -49,9 +52,14 @@ if __name__ == '__main__':
             data = lines.next()
             try:
                 fields = data.split()
-                range_msg.range = float(fields[1])
-                range_msg.header.stamp = rospy.Time.now()
-                range_pub.publish(range_msg)
+
+                quality = float(fields[6]) / 128.0
+                quality_pub.publish(quality)
+
+                if quality >= quality_threshold:
+                    range_msg.range = float(fields[1])
+                    range_msg.header.stamp = rospy.Time.now()
+                    range_pub.publish(range_msg)
             except ValueError as e:
                 rospy.logerr(str(e))
                 continue
