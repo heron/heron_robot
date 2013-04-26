@@ -68,6 +68,18 @@ PortException::PortException(const char* con, const char* msg) :
     fflush(stderr);
 }
 
+
+Port::Port(const char* conn_string, struct pollfd* pollfd_ptr)
+    : m_conn_string(conn_string), m_pollfd_ptr(pollfd_ptr)
+{
+    if (m_pollfd_ptr == 0) {
+        throw new PortException(m_conn_string, "pollfd object not specified.");
+    } else {
+        m_pollfd_ptr->fd = -1;
+        m_pollfd_ptr->events = POLLIN;
+    }
+}
+
 Port::~Port() {
     /* Trivial destructor.  But if you inline this in the class definition,
      * you'll find that gcc spits a bunch of undefined vtable references
@@ -82,42 +94,25 @@ Port::~Port() {
  *                      "path" - fallback if none of the above match, a pty endpoint 
  * @return An appropriate Port instance
  */
-Port* Port::create(const char *conn_string) {
+Port* Port::create(const char *conn_string, struct pollfd* pollfd_ptr) {
     if( ! strncmp(conn_string, "serial:", 7) ) {
-        return new SerialPort(conn_string);
+        return new SerialPort(conn_string, pollfd_ptr);
     } else if( !strncmp(conn_string, "pty:", 4) ) {
-        return new PtyPort(conn_string+4);
+        return new PtyPort(conn_string + 4, pollfd_ptr);
     } else {
-        return new PtyPort(conn_string);
+        return new PtyPort(conn_string, pollfd_ptr);
     }
 }
-
-/**
- * Read a byte from this port (non-blocking).
- * If a validator has been applied to this port, the read
- * char will be evaluated by the validator.
- * @param ch    Pointer where the read char should be written.
- * @return      1 if a char is read.  0 if no chars are currently available. 
- */
-int Port::readByte(unsigned char *ch)
-{
-    return _read(ch);
-}
-
-/**
- * Write a byte to this Port.
- * @param ch    The byte to write.
- */
-void Port::writeByte(unsigned char ch)
-{
-    _write(ch);
+    
+short Port::poll_revents() {
+    return m_pollfd_ptr->revents;
 }
 
 /**
  * Create a pseudo terminal enpoint.
  * @param path  Path where a symlink to the pty device should be created.
  */
-PtyPort::PtyPort(const char* path) : Port(0), m_path(path), m_ptyfd(-1)
+PtyPort::PtyPort(const char* path, struct pollfd* pollfd_ptr) : Port(0, pollfd_ptr), m_path(path), m_slavefd(-1)
 {
     /* Make sure no file already exists at path */
     if( ! access(m_path, F_OK) ) {
@@ -133,10 +128,8 @@ PtyPort::PtyPort(const char* path) : Port(0), m_path(path), m_ptyfd(-1)
 PtyPort::~PtyPort()
 {
     unlink(m_path);
-    if(m_ptyfd >= -1) close(m_ptyfd);
-    m_ptyfd = -1;
-    if(m_ptyfd >= -1) close(m_slavefd);
-    m_slavefd = -1;
+    if(m_pollfd_ptr->fd >= -1) close(m_pollfd_ptr->fd);
+    if(m_slavefd >= -1) close(m_slavefd);
 }
 
 /**
@@ -146,36 +139,36 @@ PtyPort::~PtyPort()
 void PtyPort::_create_pty()
 {
     /* Create the PTY */
-    m_ptyfd = posix_openpt( O_RDWR | O_NOCTTY | O_NDELAY);
-    if( m_ptyfd == -1 ) {
+    m_pollfd_ptr->fd = posix_openpt( O_RDWR | O_NOCTTY | O_NDELAY);
+    if( m_pollfd_ptr->fd == -1 ) {
         throw new PortException(m_path, strerror(errno));
     }
 
-    if( grantpt(m_ptyfd) ) {
+    if( grantpt(m_pollfd_ptr->fd) ) {
         throw new PortException(m_path, strerror(errno));
 	}
-	if( unlockpt(m_ptyfd) ) {
+	if( unlockpt(m_pollfd_ptr->fd) ) {
         throw new PortException(m_path, strerror(errno));
 	}
 
     /* Disable echoing */
     struct termios pty_attr;
-    if( tcgetattr(m_ptyfd, &pty_attr) ) {
+    if( tcgetattr(m_pollfd_ptr->fd, &pty_attr) ) {
         throw new PortException(m_path, strerror(errno));
     }
     cfmakeraw(&pty_attr);
-    if( tcsetattr(m_ptyfd, TCSANOW, &pty_attr) ) {
+    if( tcsetattr(m_pollfd_ptr->fd, TCSANOW, &pty_attr) ) {
         throw new PortException(m_path, strerror(errno));
     }
 
     /* Obtain the name of the slave device file */
-	const char *slave_name = (const char*)ptsname(m_ptyfd);
+	const char *slave_name = (const char*)ptsname(m_pollfd_ptr->fd);
     if( !slave_name ) {
         throw new PortException(m_path, strerror(errno));
 	}
 
     /* Open the slave device 
-     * We never ever actually do anything with this.  This is hack, it 
+     * We never ever actually do anything with this.  This is a hack; it 
      * ensures that there is always an open file descriptor to the pty, so
      * it doesn't get closed when a client process closes the slave */
     m_slavefd = open(slave_name, O_RDWR | O_NOCTTY);
@@ -199,7 +192,7 @@ void PtyPort::_create_pty()
  */
 void PtyPort::_respawn_pty()
 {
-    if( m_ptyfd >= 0 ) close(m_ptyfd);
+    if( m_pollfd_ptr->fd >= 0 ) close(m_pollfd_ptr->fd);
     _create_pty();
 }
 
@@ -209,11 +202,11 @@ void PtyPort::_respawn_pty()
  * @param ch    A pointer to a single char.  If a char is available, it will
  *              be written here.
  */
-int PtyPort::_read(unsigned char * ch) 
+ssize_t PtyPort::read(void *buf, size_t count)
 {
-    if(m_ptyfd == -1 ) throw new PortException(m_path, "Attempted read from invalid pty");
+    if(m_pollfd_ptr->fd == -1 ) throw new PortException(m_path, "Attempted read from invalid pty");
 
-    int retval = read(m_ptyfd, ch, 1);
+    int retval = ::read(m_pollfd_ptr->fd, buf, count);
     if( (retval < 0) && (errno!=EAGAIN) ) {
         /* I/O error, attempt to respawn pty */ 
         _respawn_pty();
@@ -231,11 +224,11 @@ int PtyPort::_read(unsigned char * ch)
  * closed by a user process.
  * @param ch    The char to write
  */
-void PtyPort::_write(unsigned char ch)
+ssize_t PtyPort::write(void *buf, size_t count)
 {
-    if(m_ptyfd == -1) throw new PortException(m_path, "Attempted write to invalid pty");
+    if(m_pollfd_ptr->fd == -1) throw new PortException(m_path, "Attempted write to invalid pty");
 
-    int retval = write(m_ptyfd, &ch, 1);
+    int retval = ::write(m_pollfd_ptr->fd, buf, count);
     if( (retval < 0) && (errno!=EAGAIN) ) {
         /* I/O error, attempt to respawn pty */
         _respawn_pty();
@@ -247,7 +240,8 @@ void PtyPort::_write(unsigned char ch)
  * @param conn_str  The connection string, of the form "serial:devname,baudrate".
  *                  The baudrate element is optional; baud rate defaults to 115200
  */
-SerialPort::SerialPort(const char* conn_str): Port(conn_str), m_serial(0)
+SerialPort::SerialPort(const char* conn_str, struct pollfd* pollfd_ptr)
+    : Port(conn_str, pollfd_ptr)
 {
     if( strncmp(conn_str, "serial:", 7) ) 
         throw new PortException(conn_str, "Bad serial connection string");
@@ -274,12 +268,12 @@ SerialPort::SerialPort(const char* conn_str): Port(conn_str), m_serial(0)
     }
 
     printf("Opening serial port: %s, b%d\n", portname, baudrate);
-    if( OpenSerial(&m_serial, portname) < 0) {
+    if( OpenSerial(&m_pollfd_ptr->fd, portname) < 0) {
         perror("OpenSerial");
         throw new PortException(conn_str, "Failed to open device.");
     }
 
-    if( SetupSerial(m_serial, baudrate) < 0) {
+    if( SetupSerial(m_pollfd_ptr->fd, baudrate) < 0) {
         perror("SetupSerial");
         throw new PortException(conn_str, "Failed to configure serial port.");
     }
@@ -290,17 +284,21 @@ SerialPort::SerialPort(const char* conn_str): Port(conn_str), m_serial(0)
  */
 SerialPort::~SerialPort()
 {
-    if(m_serial) CloseSerial(m_serial);
+    if(m_pollfd_ptr->fd != -1) close(m_pollfd_ptr->fd);
 }
 
-int SerialPort::_read(unsigned char* ch) 
+ssize_t SerialPort::read(void *buf, size_t count)
 {
-    return ReadData(m_serial, (char*)ch, 1);
+    return ::read(m_pollfd_ptr->fd, buf, count);
 }
 
-void SerialPort::_write(unsigned char ch)
+ssize_t SerialPort::write(void *buf, size_t count)
 {
-    WriteData(m_serial, (char*)&ch, 1);
+    int n = 0;
+    do {
+        errno = 0;
+	    n = ::write(m_pollfd_ptr->fd, buf, count);
+    } while( errno == EAGAIN);
+    return n;
 }
-
 

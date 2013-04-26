@@ -48,6 +48,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+#include <poll.h>
 
 #include <vector>
 
@@ -58,6 +59,7 @@ using namespace std;
 // Global for term signal handler:
 vector<Port*> service_ports;
 vector<Port*> client_ports;
+vector<struct pollfd> pollfds;
 
 // Need to execute atexit() when a fatal signal is received
 void handle_term(int signum) {
@@ -84,6 +86,62 @@ void handle_term(int signum) {
     exit(0);
 }
 
+
+void print_help(const char* executable_name) {
+    printf("Usage: \n"
+           "1: %s [service] [client] [options]\n"
+           "2: %s --service [ports] --client [ports] [options]\n"
+           "\n"
+           "1: Creates a pair of terminals and pipes them to each other\n"
+           "[service] and [client] are port specification strings.\n"
+           "\n"
+           "2: Similar to 1, but it is possible to have multiple ports at either end\n"
+           "of the connection.  [ports] is a list of port specification strings.\n"
+           "\n"
+           "Port specification: \n"
+           "serial:devname,baudrate - Use a real serial port\n"
+           "pty:path                - Create a pty, with symlink at given path\n"
+           "path                    - Equivalent to pty:path\n"
+           "\n"
+           "With multiple ports, a char received on a given service port will be\n"
+           "transmitted to all client ports, but not to other service ports. The\n"
+           "converse holds for chars received on client ports.\n"
+           "\n"
+           "Options:\n"
+           "--service [ports]   Specify additional service ports.  Each of [ports]\n"
+           "                    is a port specification string.  If this option is\n"
+           "                    specified multiple times, port lists will be added\n"
+           "--client [ports]    Same as --service, but for client ports.\n"
+           ,
+           executable_name, executable_name);
+}
+
+
+void pass_data(vector<Port*>& from_ports, vector<Port*>& to_ports) {
+    vector<Port*>::iterator from_iter, to_iter;
+    for( from_iter = from_ports.begin(); from_iter < from_ports.end(); ++from_iter)
+    {
+        if ((*from_iter)->poll_revents() == POLLIN) {
+            char buff[1024];
+            int count = (*from_iter)->read(buff, sizeof(buff));
+            for( to_iter = to_ports.begin();
+                 to_iter < to_ports.end(); ++to_iter )
+            {
+                (*to_iter)->write(buff, count);
+            }
+        }
+    }
+}
+
+
+void update_blocking() 
+{
+    poll(&pollfds[0], pollfds.size(), 1000);
+    pass_data(service_ports, client_ports); 
+    pass_data(client_ports, service_ports); 
+}
+
+
 int main(int argc, char *argv[]) {
     /* This program is often used as a daemon, with stdout piped to a log. Bash
      * seems to set pretty aggressive buffering on redirected stdout, which is
@@ -93,32 +151,7 @@ int main(int argc, char *argv[]) {
     setvbuf(stdout, 0, _IOLBF, 64);
 
     if( argc < 3 ) {
-        printf("Usage: \n"
-               "1: %s [service] [client] [options]\n"
-               "2: %s --service [ports] --client [ports] [options]\n"
-               "\n"
-               "1: Creates a pair of terminals and pipes them to each other\n"
-               "[service] and [client] are port specification strings.\n"
-               "\n"
-               "2: Similar to 1, but it is possible to have multiple ports at either end\n"
-               "of the connection.  [ports] is a list of port specification strings.\n"
-               "\n"
-               "Port specification: \n"
-               "serial:devname,baudrate - Use a real serial port\n"
-               "pty:path                - Create a pty, with symlink at given path\n"
-               "path                    - Equivalent to pty:path\n"
-               "\n"
-               "With multiple ports, a char received on a given service port will be\n"
-               "transmitted to all client ports, but not to other service ports. The\n"
-               "converse holds for chars received on client ports.\n"
-               "\n"
-               "Options:\n"
-               "--service [ports]   Specify additional service ports.  Each of [ports]\n"
-               "                    is a port specification string.  If this option is\n"
-               "                    specified multiple times, port lists will be added\n"
-               "--client [ports]    Same as --service, but for client ports.\n"
-               ,
-               argv[0], argv[0]);
+        print_help(argv[0]);
         return 1;
     }
    
@@ -127,7 +160,7 @@ int main(int argc, char *argv[]) {
     vector<const char*> client_strs;
 
     // TODO: We've probably hit critical mass for optarg
-
+    // (or making this a ROS node and using parameters...)
     int cur_arg = 1;
 
     /* If the first argument doesn't start with --, we assume that the first two
@@ -180,53 +213,22 @@ int main(int argc, char *argv[]) {
     signal(SIGTERM, handle_term);
     signal(SIGABRT, handle_term);
 
-    /* Open the ports */
-    vector<const char*>::iterator str_iter;
-    for(str_iter = service_strs.begin(); str_iter != service_strs.end(); ++str_iter) {
-        service_ports.push_back(Port::create(*str_iter));
-    }
-    for(str_iter = client_strs.begin(); str_iter != client_strs.end(); ++str_iter) {
-        client_ports.push_back(Port::create(*str_iter));
-    }
+    /* Open the ports, build pollfd array. */
+    {
+        pollfds.resize(service_strs.size() + client_strs.size());
+        vector<struct pollfd>::iterator pollfd_iter = pollfds.begin();
+        vector<const char*>::iterator str_iter;
 
-    /******** Main Loop ********/
-
-    /* Forward data between ptys */
-    unsigned char byte;
-    bool gotbyte;
-    while( 1 ) {
-        gotbyte = false;
-
-        /* Attempt to transfer chars from each service port */
-        for( vector<Port*>::iterator i = service_ports.begin();
-             i < service_ports.end(); ++i)
-        {
-            if( (**i).readByte(&byte) ) {
-                gotbyte = true;
-                for( vector<Port*>::iterator j = client_ports.begin();
-                     j < client_ports.end(); ++j )
-                {
-                    (**j).writeByte(byte);
-                }
-            }
+        for(str_iter = service_strs.begin(); str_iter != service_strs.end(); ++str_iter, ++pollfd_iter) {
+            service_ports.push_back(Port::create(*str_iter, &*pollfd_iter));
         }
-
-        /* Attempt to transfer chars from each client port */
-        for( vector<Port*>::iterator i = client_ports.begin();
-             i < client_ports.end(); ++i)
-        {
-            if( (**i).readByte(&byte) ) {
-                gotbyte = true;
-                for( vector<Port*>::iterator j = service_ports.begin();
-                     j < service_ports.end(); ++j )
-                {
-                    (**j).writeByte(byte);
-                }
-            }
+        for(str_iter = client_strs.begin(); str_iter != client_strs.end(); ++str_iter, ++pollfd_iter) {
+            client_ports.push_back(Port::create(*str_iter, &*pollfd_iter));
         }
+    }
 
-        /* Hold off a bit if there was no data to forward */
-        if( ! gotbyte ) usleep(500);
+    while(1) {
+        update_blocking();
     }
 }
 

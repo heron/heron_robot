@@ -44,9 +44,6 @@
  *
  */
 
-#if !defined(LINUX_SERIAL_H) && !defined(win_x86)
-#define LINUX_SERIAL_H
-
 #include "serial.h"  /* Std. function protos */
 #include <stdio.h>   /* Standard input/output definitions */
 #include <string.h>  /* String function definitions */
@@ -57,34 +54,30 @@
 #include <stdlib.h>  /* Malloc */
 
 
-int OpenSerial(void** handle, const char* port_name)
+int OpenSerial(int* fd, const char* port_name)
 {
-	int fd; /* File descriptor for the port */
-
-	fd = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY);
-	if (fd == -1) {
+	*fd = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+	if (*fd == -1) {
 		fprintf(stderr, "Unable to open %s\n\r", port_name);
 		return -3;
 	} 
 
     // Verify it is a serial port
-    if (!isatty(fd)) {
-        close(fd);
+    if (!isatty(*fd)) {
+        close(*fd);
 	    fprintf(stderr, "%s is not a serial port\n", port_name);
         return -3;
     }
 
-	*handle = (int*)malloc(sizeof(int));
-	**(int**)handle = fd;
-	return fd;
+	return *fd;
 }
 
-int SetupSerial(void* handle, int baudrate)
+int SetupSerial(int fd, int baudrate)
 {
     struct termios options;
 
     // Get the current options for the port...
-    tcgetattr(*(int*)handle, &options);
+    tcgetattr(fd, &options);
 
     // 8 bits, 1 stop, no parity
     options.c_cflag = 0;
@@ -131,66 +124,7 @@ int SetupSerial(void* handle, int baudrate)
     options.c_cc[VTIME] = 1;    // always return after 0.1 seconds
 
     // Set the new options for the port...
-    tcsetattr(*(int*)handle, TCSAFLUSH, &options);
+    tcsetattr(fd, TCSAFLUSH, &options);
 
     return 0;
 }
-
-int WriteData(void* handle, const char* buffer, int length)
-{
-    /* We need non-blocking reads, but blocking writes.  So,
-     * if the write fails because the serial port is not ready for more
-     * data, we spin until it succeeds */
-    int n = 0;
-    do {
-        errno = 0;
-	    n = write(*(int*)handle, buffer, length);
-    } while( errno == EAGAIN);
-
-	if (n < 0)
-	{
-        perror("Serial write");
-		return -1;
-	}
-
-	// serial port output monitor
-//#define TX_DEBUG
-#ifdef TX_DEBUG
-	printf("TX:");
-	int i;
-	for (i=0; i<length; ++i) printf(" %x", (unsigned char)(buffer[i]));
-	printf("\r\n");
-#endif
-
-	return n;
-}
-
-int ReadData(void* handle, char* buffer, int length)
-{
-	int bytesRead = read(*(int*)handle, buffer, length);
-    if (bytesRead <= 0) {
-        return 0;
-    }
-
-	// serial port input monitor
-//#define RX_DEBUG
-#ifdef RX_DEBUG
-	printf("RX:");
-	int i;
-	for (i=0; i<bytesRead; ++i) printf(" %x", (unsigned char)buffer[i]);
-	printf("\r\n");
-#endif
-
-	return bytesRead;
-}
-
-int CloseSerial(void* handle)
-{
-	if (NULL == handle)
-		return 0;
-	close(*(int*)handle);
-	free(handle);
-	return 0;
-}
-
-#endif // LINUX_SERIAL

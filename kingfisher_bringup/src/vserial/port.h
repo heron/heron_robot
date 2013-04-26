@@ -48,7 +48,7 @@
 #ifndef VSERIAL_PORT_H
 #define VSERIAL_PORT_H
 
-class Validator;
+#include <poll.h>
 
 /** Port abstract base class.  
  *  Provides the static create() function, which will instantiate the proper
@@ -56,54 +56,44 @@ class Validator;
 class Port {
 protected:
     const char* m_conn_string;
-    Validator*  m_validator;
-
-    Port(const char *conn_string) : m_conn_string(conn_string), m_validator(0) 
-        {}
-
-    virtual int  _read(unsigned char * ch) = 0;
-    virtual void _write(unsigned char ch) =  0;
+    struct pollfd* m_pollfd_ptr;
+    Port(const char* conn_string, struct pollfd* pollfd_ptr);
 
 public:
     virtual ~Port();
+    static Port* create(const char *conn_string, struct pollfd* pollfd_ptr);
+  
+    virtual ssize_t read(void *buf, size_t count) = 0; 
+    virtual ssize_t write(void *buf, size_t count) = 0; 
 
-    static Port* create(const char *conn_string);
-   
-    int readByte(unsigned char *ch);
-    void writeByte(unsigned char ch);
-
-    void setValidator(Validator * v) { m_validator = v; }
+    short poll_revents(); 
 };
 
 /** Pseudo terminal port class */
 class PtyPort: public Port {
 private:
     const char* m_path;
-    int         m_ptyfd;
     int         m_slavefd;
 
     void _create_pty();
     void _respawn_pty();
 
-protected:
-    virtual int _read(unsigned char * ch);
-    virtual void _write(unsigned char ch);
-
 public:
-    PtyPort(const char *path);
+    PtyPort(const char *path, struct pollfd* pollfd_ptr);
+    virtual ssize_t read(void *buf, size_t count); 
+    virtual ssize_t write(void *buf, size_t count); 
+
     virtual ~PtyPort();
 };
 
 /** Actual serial port class 
  *  Connection string has the form "serial:devname,baud"  */
 class SerialPort: public Port {
-protected:
-    void* m_serial;
-
-    virtual int _read(unsigned char * ch);
-    virtual void _write(unsigned char ch);
 public:
-    SerialPort(const char *conn_string);
+    SerialPort(const char *conn_string, pollfd* pollfd_ptr);
+    virtual ssize_t read(void *buf, size_t count); 
+    virtual ssize_t write(void *buf, size_t count); 
+
     virtual ~SerialPort();
 };
 
