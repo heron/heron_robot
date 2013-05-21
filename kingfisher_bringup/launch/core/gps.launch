@@ -7,7 +7,7 @@
   <!-- Start NMEA GPS driver -->
   <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps" respawn="true">
     <param name="port" value="/tmp/ublox_ros" />
-    <param name="baud" value="19200" />
+    <param name="baud" value="115200" />
     <param name="useRMC" value="false" />
   </node>
 </launch>

@@ -2,6 +2,17 @@
 # set measurement period to 200ms (5hz)
 B5 62 06 08 06 00 C8 00 01 00 01 00 DE 6A
 
+# UBX-CFG-NAV5
+# - set motion model to "sea"
+B5 62 06 24 24 00 FF FF 05 03 00 00 00 00 10 27
+00 00 05 00 FA 00 FA 00 64 00 2C 01 00 00 00 00  
+00 00 00 00 00 00 00 00 00 00 15 BA              
+
+# UBX-CFG-PRT
+# - set baud rate to 115200
+B5 62 06 00 14 00 01 00 00 00 D0 08 00 00 00 C2
+01 00 03 00 03 00 00 00 00 00 BC 5E
+
 # UBX-CFG-NMEA
 # permit COG output even if COG frozen
 # disable compatibility and consideration modes
