@@ -1,7 +1,7 @@
 <launch>
   <!-- Port splitter -->
   <node pkg="kingfisher_bringup" type="vserial" name="ublox_splitter"
-        args="--service serial:/dev/ublox,19200
+        args="--service serial:/dev/ublox,115200
               --client /tmp/ublox_ros /tmp/ublox_user" respawn="true" />
 
   <!-- Start NMEA GPS driver -->
