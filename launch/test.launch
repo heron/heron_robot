@@ -1,4 +1,10 @@
 <launch>
+  <arg name="imu_enabled" default="true" />
+  <arg name="imu_rate" default="5.0" />
+  <arg name="rcm_enabled" default="true" />
+  <arg name="rcm_rate" default="5.0" />
+  
+
   <!-- GPS input -->
   <node pkg="nmea_comms" type="nmea_serial_node" name="serial_node" ns="gps" output="screen">
     <param name="port" value="/dev/ttyACM0" />
@@ -12,13 +18,19 @@
 
   <group ns="nmea_if">
     <!-- GPS time offset calculator -->
+    <param name="time_offset_default" value="-14401.595" />
     <node pkg="kingfisher_nmea" type="gps_time_offset.py" name="time_offset" output="screen">
       <remap from="rx" to="/gps/rx" />
     </node>
 
-    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" output="screen">
-      <remap from="imu/data" to="/imu/data" />
-    </node>
+    <!-- Publishes $CPIMU and $CPRCM messages -->
+    <node pkg="topic_tools" type="throttle" name="imu_throttle"
+          args="messages /imu/data $(arg imu_rate) imu/data"
+          if="$(arg imu_enabled)" />
+    <node pkg="topic_tools" type="throttle" name="rcm_throttle"
+          args="messages /imu/rpy $(arg rcm_rate) imu/rpy"
+          if="$(arg rcm_enabled)" />
+    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" output="screen" />
   
     <!-- NMEA KF interface -->
     <node pkg="nmea_comms" type="nmea_socket_node" name="socket_node">

@@ -43,13 +43,11 @@ class TimeOffset(RxHelper):
     gps_rostime = rospy.Time(int(mktime(gps_datetime.timetuple())),
                              int(float(frac_seconds_s) * 1000000000.0))
  
-    time_offset = gps_rostime - msg.header.stamp
+    time_offset = msg.header.stamp - gps_rostime
     self.measure_sum += time_offset
     self.measures.append(time_offset)
 
-    print "a"
     if len(self.measures) > self.NUM_MEASUREMENTS:
-      print "b"
       self.measure_sum -= self.measures.popleft()
       smoothed_offset = self.measure_sum / float(len(self.measures))
       self.pub.publish(smoothed_offset)

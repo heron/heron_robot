@@ -26,14 +26,13 @@ class TxHelper(object):
 
   def gps_time(self, rostime=None):
     if not hasattr(self, 'time_offset_subscriber'):
-      self.time_offset = rospy.Duration(0)
+      self.time_offset = rospy.Duration(rospy.get_param("time_offset_default", 0))
       def cb(msg):
         self.time_offset = msg.data
       self.time_offset_subscriber = rospy.Subscriber('time_offset', Duration, cb)
     if not rostime:
       rostime = rospy.Time.now()
-    print self.time_offset
-    time = rostime + self.time_offset
+    time = rostime - self.time_offset
     dt = datetime.fromtimestamp(time.to_sec())
     return self.GPS_TIME_FORMAT % (dt.hour, dt.minute, float(dt.second) + (float(dt.microsecond) / 1000000))
     
