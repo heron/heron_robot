@@ -1,0 +1,19 @@
+<package>
+  <description brief="kingfisher_nmea">
+
+     kingfisher_nmea
+
+  </description>
+  <author>Mike Purvis</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kingfisher_nmea</url>
+  <depend package="rospy"/>
+  <depend package="nmea_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+
+</package>
+
+

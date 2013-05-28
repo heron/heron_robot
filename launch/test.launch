@@ -1,0 +1,27 @@
+<launch>
+  <!-- GPS input -->
+  <node pkg="nmea_comms" type="nmea_serial_node" name="serial_node" ns="gps" output="screen">
+    <param name="port" value="/dev/ttyACM0" />
+  </node>
+  <node pkg="topic_tools" type="relay" name="relay" args="/gps/rx /nmea_if/tx">
+  </node>
+
+  <node pkg="imu_um6" type="imu_um6_node.py" name="imu_um6_node" output="screen" respawn="true">
+    <param name="port" type="string" value="/dev/ttyUSB0"/>
+  </node>
+
+  <group ns="nmea_if">
+    <!-- GPS time offset calculator -->
+    <node pkg="kingfisher_nmea" type="gps_time_offset.py" name="time_offset" output="screen">
+      <remap from="rx" to="/gps/rx" />
+    </node>
+
+    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" output="screen">
+      <remap from="imu/data" to="/imu/data" />
+    </node>
+  
+    <!-- NMEA KF interface -->
+    <node pkg="nmea_comms" type="nmea_socket_node" name="socket_node">
+    </node>
+  </group>
+</launch>
