@@ -6,6 +6,13 @@ import rospy
 from nmea_msgs.msg import Sentence
 from std_msgs.msg import Duration
 from datetime import datetime
+from collections import namedtuple
+
+import re, operator
+
+
+def checksum(sentence):
+  return "%02X" % reduce(operator.ixor, [ord(c) for c in sentence])
 
 
 class TxHelper(object):
@@ -17,9 +24,9 @@ class TxHelper(object):
       self.tx_publisher = rospy.Publisher('tx', Sentence)
 
     fields = map(str, fields)
-    s = Sentence(talker=self.TALKER, 
-        sentence=self.SENTENCE,
-        fields=fields)
+    sentence_body = "%s%s,%s" % (self.TALKER, self.SENTENCE, ",".join(fields))
+
+    s = Sentence(sentence="$%s*%s" % (sentence_body, checksum(sentence_body)))
     s.header.stamp = rospy.Time.now()
 
     self.tx_publisher.publish(s)
@@ -42,7 +49,26 @@ class RxHelper(object):
 
   def listen(self, sentence, callback):
     def cb(msg):
-      if msg.talker == self.TALKER and msg.sentence == sentence:
-        callback(msg)
+      #print msg
+      mo = re.match("^\$([A-Za-z0-9,.]+)\*([0-9A-Za-z]{2})", msg.sentence)
+      if not mo:
+        # Not a sentence
+        return
+
+      sentence_body, sentence_checksum = mo.groups()
+      print sentence_body, sentence_checksum
+      if checksum(sentence_body) != sentence_checksum:
+        # Bad checksum
+        return
+
+      raw_fields = sentence_body.split(",")
+      if raw_fields[0][:2] == self.TALKER and raw_fields[0][2:5] == sentence:
+        def process_field(f):
+          if f == '': return None
+          if re.match('^[0-9]+$', f): return int(f)
+          if re.match('^[0-9.]+$', f): return float(f)
+          return f
+        fields = map(process_field, raw_fields[1:])
+        callback(msg.header, fields)
     rospy.Subscriber("rx", Sentence, cb)
 
