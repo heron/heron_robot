@@ -18,6 +18,9 @@
 
     <!-- interpretation -->
     <node pkg="nmea_gps_driver" type="nmea_topic_driver.py" name="nmea_topic_driver" />
+
+    <!-- ENU translation -->
+    <node pkg="enu" type="enu_publisher.py" name="enu_publisher" />
   </group>
 
   <node pkg="imu_um6" type="imu_um6_node.py" name="imu_um6_node" output="screen" respawn="true">
