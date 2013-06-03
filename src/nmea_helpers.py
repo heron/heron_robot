@@ -49,14 +49,12 @@ class RxHelper(object):
 
   def listen(self, sentence, callback):
     def cb(msg):
-      #print msg
       mo = re.match("^\$([A-Za-z0-9,.]+)\*([0-9A-Za-z]{2})", msg.sentence)
       if not mo:
         # Not a sentence
         return
 
       sentence_body, sentence_checksum = mo.groups()
-      print sentence_body, sentence_checksum
       if checksum(sentence_body) != sentence_checksum:
         # Bad checksum
         return
