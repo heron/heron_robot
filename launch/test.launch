@@ -5,9 +5,6 @@
       <param name="port" value="/dev/ttyACM0" />
     </node>
 
-    <node pkg="topic_tools" type="relay" name="relay" args="rx /nmea_if/tx">
-    </node>
-
     <!-- interpretation -->
     <node pkg="nmea_gps_driver" type="nmea_driver.py" name="nmea_topic_driver" />
 
