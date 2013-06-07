@@ -1,0 +1,6 @@
+<launch>
+  <!-- MJPEG video server -->
+  <node pkg="mjpeg_server" type="mjpeg_server" name="mjpeg_server">
+    <param name="port" value="8080" />
+  </node>
+</launch>
