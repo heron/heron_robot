@@ -14,7 +14,7 @@
     </node>
 
     <!-- Relay sentences from GPS receiver --> 
-    <node pkg="topic_tools" type="relay" name="relay" args="/gps/rx rx">
+    <node pkg="topic_tools" type="relay" name="relay" args="/gps/rx tx">
     </node>
 
     <!-- Publishes $CPIMU and $CPRCM messages -->
