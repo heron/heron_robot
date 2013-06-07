@@ -1,13 +1,15 @@
 <launch>
-  <!-- Port splitter -->
-  <node pkg="kingfisher_bringup" type="vserial" name="ublox_splitter"
-        args="--service serial:/dev/ublox,115200
-              --client /tmp/ublox_ros /tmp/ublox_user" respawn="true" />
+  <!-- GPS serial comms -->
+  <group ns="gps">
+    <node pkg="nmea_comms" type="nmea_serial_node" name="serial_node" output="screen">
+      <param name="port" value="/dev/ublox" />
+      <param name="baud" value="115200" />
+    </node>
 
-  <!-- Start NMEA GPS driver -->
-  <node ns="gps" pkg="nmea_gps_driver" type="nmea_gps_driver.py" name="nmea_gps" respawn="true">
-    <param name="port" value="/tmp/ublox_ros" />
-    <param name="baud" value="115200" />
-    <param name="useRMC" value="false" />
-  </node>
+    <!-- interpretation -->
+    <node pkg="nmea_gps_driver" type="nmea_driver.py" name="nmea_topic_driver" />
+
+    <!-- ENU translation -->
+    <!-- <node pkg="enu" type="enu_publisher.py" name="enu_publisher" /> -->
+  </group>
 </launch>
