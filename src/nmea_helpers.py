@@ -49,15 +49,17 @@ class RxHelper(object):
 
   def listen(self, sentence, callback):
     def cb(msg):
-      mo = re.match("^\$([A-Za-z0-9,.]+)\*([0-9A-Za-z]{2})", msg.sentence)
+      mo = re.match("^\$([A-Za-z0-9,.]+)\*([0-9A-Za-z]{2})?", msg.sentence)
       if not mo:
         # Not a sentence
         return
 
       sentence_body, sentence_checksum = mo.groups()
-      if checksum(sentence_body) != sentence_checksum:
-        # Bad checksum
-        return
+      if sentence_checksum:
+        # By default, checksum is optional on received messages.
+        if checksum(sentence_body) != sentence_checksum:
+          # Bad checksum
+          return
 
       raw_fields = sentence_body.split(",")
       if raw_fields[0][:2] == self.TALKER and raw_fields[0][2:5] == sentence:
