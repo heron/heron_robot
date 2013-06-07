@@ -1,12 +1,4 @@
 <launch>
-  <arg name="imu_enabled" default="true" />
-  <arg name="imu_rate" default="5.0" />
-  <arg name="rcm_enabled" default="true" />
-  <arg name="rcm_rate" default="5.0" />
-  <arg name="battery_enabled" default="true" />
-  <arg name="battery_rate" default="0.5" />
- 
-
   <!-- GPS serial comms -->
   <group ns="gps">
     <node pkg="nmea_comms" type="nmea_serial_node" name="serial_node" output="screen">
@@ -17,40 +9,16 @@
     </node>
 
     <!-- interpretation -->
-    <node pkg="nmea_gps_driver" type="nmea_topic_driver.py" name="nmea_topic_driver" />
+    <node pkg="nmea_gps_driver" type="nmea_driver.py" name="nmea_topic_driver" />
 
     <!-- ENU translation -->
     <node pkg="enu" type="enu_publisher.py" name="enu_publisher" />
   </group>
 
+  <!-- IMU serial comms -->
   <node pkg="imu_um6" type="imu_um6_node.py" name="imu_um6_node" output="screen" respawn="true">
     <param name="port" type="string" value="/dev/ttyUSB0"/>
   </node>
 
-  <group ns="nmea_if">
-    <!-- GPS time offset calculator -->
-    <param name="time_offset_default" value="-14401.595" />
-    <node pkg="kingfisher_nmea" type="gps_time_offset.py" name="time_offset" output="screen">
-      <remap from="rx" to="/gps/rx" />
-    </node>
-
-    <!-- Publishes $CPIMU and $CPRCM messages -->
-    <node pkg="topic_tools" type="throttle" name="imu_throttle"
-          args="messages /imu/data $(arg imu_rate) imu/data"
-          if="$(arg imu_enabled)" />
-    <node pkg="topic_tools" type="throttle" name="rcm_throttle"
-          args="messages /imu/rpy $(arg rcm_rate) imu/rpy"
-          if="$(arg rcm_enabled)" />
-    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" output="screen" />
-  
-    <!-- Publishes $CPRBS messages -->
-    <node pkg="topic_tools" type="throttle" name="battery_throttle"
-          args="messages /sense $(arg battery_rate) sense"
-          if="$(arg battery_enabled)" />
-    <node pkg="kingfisher_nmea" type="battery.py" name="nmea_battery" output="screen" />
-
-    <!-- NMEA KF interface -->
-    <node pkg="nmea_comms" type="nmea_socket_node" name="socket_node">
-    </node>
-  </group>
+  <include file="$(find kingfisher_nmea)/launch/nmea_if.launch" />
 </launch>

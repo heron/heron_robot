@@ -1,0 +1,42 @@
+<launch>
+  <arg name="imu_enabled" default="true" />
+  <arg name="imu_rate" default="5.0" />
+  <arg name="rcm_enabled" default="true" />
+  <arg name="rcm_rate" default="5.0" />
+  <arg name="battery_enabled" default="true" />
+  <arg name="battery_rate" default="0.5" />
+ 
+  <group ns="nmea_if">
+    <!-- GPS time offset calculator -->
+    <param name="time_offset_default" value="-14401.595" />
+    <node pkg="kingfisher_nmea" type="gps_time_offset.py" name="time_offset" output="screen">
+      <remap from="rx" to="/gps/rx" />
+    </node>
+
+    <!-- Publishes $CPIMU and $CPRCM messages -->
+    <node pkg="topic_tools" type="throttle" name="imu_throttle"
+          args="messages /imu/data $(arg imu_rate) imu/data"
+          if="$(arg imu_enabled)" />
+    <node pkg="topic_tools" type="throttle" name="rcm_throttle"
+          args="messages /imu/rpy $(arg rcm_rate) imu/rpy"
+          if="$(arg rcm_enabled)" />
+    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" output="screen" />
+  
+    <!-- Publishes $CPRBS messages -->
+    <node pkg="topic_tools" type="throttle" name="battery_throttle"
+          args="messages /sense $(arg battery_rate) sense"
+          if="$(arg battery_enabled)" />
+    <node pkg="kingfisher_nmea" type="battery.py" name="nmea_battery" output="screen" />
+
+    <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
+    <node pkg="kingfisher_nmea" type="commands.py" name="nmea_commands" output="screen">
+      <remap from="cmd_drive" to="/cmd_drive" />
+      <remap from="cmd_wrench" to="/cmd_wrench" />
+      <remap from="cmd_helm" to="/cmd_helm" />
+    </node>
+
+    <!-- NMEA KF interface -->
+    <node pkg="nmea_comms" type="nmea_socket_node" name="socket_node">
+    </node>
+  </group>
+</launch>
