@@ -40,14 +40,22 @@ class RawCompass(TxHelper):
   def _cb(self, msg):
     q = msg.orientation
     roll, pitch, yaw = euler_from_quaternion([ getattr(q, f) for f in q.__slots__ ])
-    yaw_ned = (pi/2) - z
+
+    # Yaw must be transformed to clockwise from north.
+    yaw_ned = (pi/2) - yaw
     if yaw_ned < 0: yaw_ned += 2*pi
+
+    # Pitch gets reported around the 180deg point.
+    if roll > 0:
+        roll_upright = roll - pi
+    else:
+        roll_upright = roll + pi
 
     self.tx(self.gps_time(),
         self.compass_id,
         degrees(yaw_ned),
-        degrees(-pitch),
-        degrees(roll),
+        degrees(pitch),
+        degrees(roll_upright),
         self.gps_time(msg.header.stamp))
 
 
