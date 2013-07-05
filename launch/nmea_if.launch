@@ -1,8 +1,6 @@
 <launch>
   <arg name="imu_enabled" default="true" />
   <arg name="imu_rate" default="5.0" />
-  <arg name="rcm_enabled" default="true" />
-  <arg name="rcm_rate" default="5.0" />
   <arg name="battery_enabled" default="true" />
   <arg name="battery_rate" default="0.5" />
  
@@ -21,9 +19,6 @@
     <node pkg="topic_tools" type="throttle" name="imu_throttle"
           args="messages /imu/data_final $(arg imu_rate) imu/data"
           if="$(arg imu_enabled)" />
-    <node pkg="topic_tools" type="throttle" name="rcm_throttle"
-          args="messages /imu/rpy $(arg rcm_rate) imu/rpy"
-          if="$(arg rcm_enabled)" />
     <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" />
   
     <!-- Publishes $CPRBS messages -->

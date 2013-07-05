@@ -18,13 +18,16 @@ class RawIMU(TxHelper):
     rospy.Subscriber("imu/data", Imu, self._cb)
 
   def _cb(self, msg):
+    # Must convert these values:
+    #  ROS frame: X forward, Y to port, Z up
+    #  Sea frame: X forward, Y to starboard, Z down
     self.tx(self.gps_time(msg.header.stamp),
         degrees(msg.angular_velocity.x),
-        degrees(msg.angular_velocity.y),
-        degrees(msg.angular_velocity.z),
+        -degrees(msg.angular_velocity.y),
+        -degrees(msg.angular_velocity.z),
         msg.linear_acceleration.x,
-        msg.linear_acceleration.y,
-        msg.linear_acceleration.z)
+        -msg.linear_acceleration.y,
+        -msg.linear_acceleration.z)
 
 
 class RawCompass(TxHelper):
@@ -36,15 +39,15 @@ class RawCompass(TxHelper):
 
   def _cb(self, msg):
     q = msg.orientation
-    x, y, z = euler_from_quaternion([ getattr(q, f) for f in q.__slots__ ])
-    z_ned = (pi/2) - z
-    if z_ned < 0: z_ned += 2*pi
+    roll, pitch, yaw = euler_from_quaternion([ getattr(q, f) for f in q.__slots__ ])
+    yaw_ned = (pi/2) - z
+    if yaw_ned < 0: yaw_ned += 2*pi
 
     self.tx(self.gps_time(),
         self.compass_id,
-        degrees(z_ned),
-        degrees(y),
-        degrees(x),
+        degrees(yaw_ned),
+        degrees(-pitch),
+        degrees(roll),
         self.gps_time(msg.header.stamp))
 
 
