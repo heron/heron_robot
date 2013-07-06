@@ -15,6 +15,7 @@
   <depend package="std_msgs"/>
   <depend package="sensor_msgs"/>
   <depend package="kingfisher_msgs"/>
+  <depend package="tf"/>
 
 </package>
 
