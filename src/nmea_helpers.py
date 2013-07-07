@@ -18,7 +18,7 @@ def checksum(sentence):
 class TxHelper(object):
   TALKER = "CP"
   GPS_TIME_FORMAT = "%02d%02d%06.3f"
-  NMEA_FLOAT_FORMAT = "%.8f"
+  NMEA_FLOAT_FORMAT = "%.6f"
 
   def tx(self, *fields):
     if not hasattr(self, 'tx_publisher'):

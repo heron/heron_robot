@@ -18,6 +18,7 @@ def sea_rpy_from_quaternion(q):
   else:
     roll = r + pi
 
-  pitch = p
+  # Sea convention has y axis pointing opposite direction, so pitch is negated.
+  pitch = -p
 
   return roll, pitch, heading

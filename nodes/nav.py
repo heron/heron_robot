@@ -4,10 +4,11 @@ import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
 from nmea_helpers import TxHelper
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
 from enu.srv import ToFix
-from math import degrees, floor, fabs
+from math import degrees, floor, fabs, atan2, hypot, pi
 from rpy_helpers import sea_rpy_from_quaternion
+from sensor_msgs.msg import Imu
 
 
 def nmea_deg(decimal_degrees):
@@ -28,7 +29,7 @@ class Nav(TxHelper):
     rospy.wait_for_service('pose_to_fix')
     self.to_fix = rospy.ServiceProxy('pose_to_fix', ToFix)
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
-    self.sub_vel = rospy.Subscriber("gps/vel", Vector3Stamped, self._vel)
+    self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
     self.vel = None
 
   def _vel(self, msg):
@@ -39,16 +40,16 @@ class Nav(TxHelper):
     roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
     
     # Override heading with value from GPS, when we have sufficient speed.
-    if self.vel and hypot(vel.vector.y, vel.vector.x) > 0.2:
-      heading = (pi/2.0) - atan2(vel.vector.y, vel.vector.x)
+    if self.vel and hypot(self.vel.twist.linear.y, self.vel.twist.linear.x) > 0.2:
+      heading = (pi/2.0) - atan2(self.vel.twist.linear.y, self.vel.twist.linear.x)
       if heading < 0: heading += 2*pi
 
     self.tx(self.gps_time(),
         nmea_deg(fix.latitude), nmea_NS(fix.latitude),
-        nmea_deg(fix.longitude), nmea_NS(fix.longitude),
-        1, # Pos quality
+        nmea_deg(fix.longitude), nmea_EW(fix.longitude),
+        1, # Pos quality. 1 = GPS, for now we don't publish unless there are fixes.
         0, # Depth
-        degrees(heading), # Heading    ##### TODO, should be transit direction, not direction of bow.
+        degrees(heading), # Heading
         degrees(roll), # Roll
         degrees(pitch), # Pitch
         self.gps_time(msg.header.stamp))
@@ -59,7 +60,8 @@ class VelRate(TxHelper):
 
   def __init__(self):
     self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
-    self.sub_vel = rospy.Subscriber("gps/vel", Vector3Stamped, self._vel)
+    self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
+    self.vel = None
 
   def _vel(self, msg):
     self.vel = msg
@@ -67,16 +69,17 @@ class VelRate(TxHelper):
   def _cb(self, msg):
     if self.vel:
       self.tx(self.gps_time(),
-          self.vel.vector.x,
-          self.vel.vector.y,
+          self.vel.twist.linear.x,
+          self.vel.twist.linear.y,
           0,  # Vertical component of transit velocity
-          -degrees(msg.angular_velocity.y)  # Pitch rate
-          degrees(msg.angular_velocity.x)  # Roll rate
-          -degrees(msg.angular_velocity.z)  # Yaw rate
+          -degrees(msg.angular_velocity.y),  # Pitch rate
+          degrees(msg.angular_velocity.x), # Roll rate
+          -degrees(msg.angular_velocity.z)) # Yaw rate
 
 
 
 if __name__ == "__main__":
   rospy.init_node('nmea_nav')
   Nav()
+  VelRate()
   rospy.spin()
