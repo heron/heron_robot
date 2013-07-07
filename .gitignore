@@ -1,2 +1,4 @@
 *.sw[o|p]
 *.pyc
+build
+bin
