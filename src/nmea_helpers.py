@@ -60,7 +60,7 @@ class RxHelper(object):
 
   def listen(self, sentence, callback):
     def cb(msg):
-      mo = re.match("^\$([A-Za-z0-9,.]+)\*([0-9A-Za-z]{2})?", msg.sentence)
+      mo = re.match("^\$([A-Za-z0-9,.-]+)\*([0-9A-Za-z]{2})?", msg.sentence)
       if not mo:
         # Not a sentence
         return

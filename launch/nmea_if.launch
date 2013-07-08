@@ -46,8 +46,8 @@
     <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
     <node pkg="kingfisher_nmea" type="commands.py" name="nmea_commands" output="screen">
       <remap from="cmd_drive" to="/cmd_drive" />
-      <remap from="cmd_wrench" to="/cmd_wrench" />
       <remap from="cmd_helm" to="/cmd_helm" />
+      <remap from="cmd_yawspd" to="/cmd_yawspd" />
     </node>
 
     <!-- NMEA KF interface -->

@@ -4,11 +4,33 @@ import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
 from nmea_helpers import RxHelper
-from kingfisher_msgs.msg import Drive  # $PYDIR message
-from kingfisher_msgs.msg import Helm   # $PYDEV message
-from geometry_msgs.msg import Wrench   # $PYDEP message
+from kingfisher_msgs.msg import Drive, Helm, YawSpd
 
 from math import radians
+
+
+class HelmPublisher(RxHelper):
+  def __init__(self):
+    self.pub = rospy.Publisher("cmd_helm", Helm)
+    self.listen("DEP", self._cb)
+
+  def _cb(self, header, fields):
+    heading_rate, thrust_pct = fields
+    self.pub.publish(float(thrust_pct) * 0.01, -radians(float(heading_rate)))
+
+
+class YawSpdPublisher(RxHelper):
+  def __init__(self):
+    self.pub = rospy.Publisher("cmd_yawspd", YawSpd)
+    self.listen("DEV", self._cb)
+
+  def _cb(self, header, fields):
+    rospy.logwarn("PYDEV!")
+    heading, speed = fields
+    rospy.logwarn(heading)
+    rospy.logwarn(speed)
+    self.pub.publish(radians(90.0 - float(heading)), float(speed))
+    rospy.logwarn("done")
 
 
 class DrivePublisher(RxHelper):
@@ -17,34 +39,15 @@ class DrivePublisher(RxHelper):
     self.listen("DIR", self._cb)
 
   def _cb(self, header, fields):
+    rospy.logwarn("PYDIR!")
     left, right = fields
-    self.pub.publish(left * 0.01, right * 0.01)
+    self.pub.publish(float(left) * 0.01, float(right) * 0.01)
 
-
-class HelmPublisher(RxHelper):
-  def __init__(self):
-    self.pub = rospy.Publisher("cmd_helm", Helm)
-    self.listen("DEV", self._cb)
-
-  def _cb(self, header, fields):
-    heading, speed = fields
-    self.pub.publish(radians(90.0 - heading), speed)
-
-
-class WrenchPublisher(RxHelper):
-  def __init__(self):
-    self.pub = rospy.Publisher("cmd_wrench", Wrench)
-    self.msg = Wrench()
-    self.listen("DEP", self._cb)
-
-  def _cb(self, header, fields):
-    self.msg.force.x, self.msg.torque.z = fields
-    self.pub.publish(self.msg)
 
 
 if __name__ == "__main__":
   rospy.init_node('nmea_command_handlers')
-  DrivePublisher()
   HelmPublisher()
-  WrenchPublisher()
+  YawSpdPublisher()
+  DrivePublisher()
   rospy.spin()
