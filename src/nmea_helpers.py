@@ -18,12 +18,23 @@ def checksum(sentence):
 class TxHelper(object):
   TALKER = "CP"
   GPS_TIME_FORMAT = "%02d%02d%06.3f"
+  NMEA_FLOAT_FORMAT = "%.8f"
 
   def tx(self, *fields):
     if not hasattr(self, 'tx_publisher'):
       self.tx_publisher = rospy.Publisher('tx', Sentence)
 
-    fields = map(str, fields)
+    def process_field(val):
+        if isinstance(val, str):
+            return val
+        if isinstance(val, int):
+            return str(val)
+        if isinstance(val, float):
+            return (self.NMEA_FLOAT_FORMAT % val).rstrip('0').rstrip('.')
+        return str(val)
+
+
+    fields = map(process_field, fields)
     sentence_body = "%s%s,%s" % (self.TALKER, self.SENTENCE, ",".join(fields))
 
     s = Sentence(sentence="$%s*%s" % (sentence_body, checksum(sentence_body)))
