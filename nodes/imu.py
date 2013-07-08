@@ -4,11 +4,11 @@ import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
 from nmea_helpers import TxHelper
+from rpy_helpers import sea_rpy_from_quaternion
+
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Vector3Stamped
-from math import degrees, pi
-
-from tf.transformations import euler_from_quaternion
+from math import degrees
 
 
 class RawIMU(TxHelper):
@@ -38,24 +38,13 @@ class RawCompass(TxHelper):
     self.compass_id = 0
 
   def _cb(self, msg):
-    q = msg.orientation
-    roll, pitch, yaw = euler_from_quaternion([ getattr(q, f) for f in q.__slots__ ])
-
-    # Yaw must be transformed to clockwise from north.
-    yaw_ned = (pi/2) - yaw
-    if yaw_ned < 0: yaw_ned += 2*pi
-
-    # Pitch gets reported around the 180deg point.
-    if roll > 0:
-        roll_upright = roll - pi
-    else:
-        roll_upright = roll + pi
+    roll, pitch, heading = sea_rpy_from_quaternion(msg.orientation)
 
     self.tx(self.gps_time(),
         self.compass_id,
-        degrees(yaw_ned),
+        degrees(heading),
         degrees(pitch),
-        degrees(roll_upright),
+        degrees(roll),
         self.gps_time(msg.header.stamp))
 
 
