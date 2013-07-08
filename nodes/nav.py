@@ -48,7 +48,8 @@ class Nav(TxHelper):
         nmea_deg(fix.latitude), nmea_NS(fix.latitude),
         nmea_deg(fix.longitude), nmea_EW(fix.longitude),
         1, # Pos quality. 1 = GPS, for now we don't publish unless there are fixes.
-        0, # Depth
+        0, # Altitude from bottom
+        0, # Depth from surface
         degrees(heading), # Heading
         degrees(roll), # Roll
         degrees(pitch), # Pitch
