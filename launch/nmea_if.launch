@@ -28,7 +28,7 @@
     <node pkg="enu" type="to_fix_service" name="pose_to_fix_service">
       <remap from="enu_datum" to="/gps/enu_datum" />
     </node>
-    <node pkg="kingfisher_nmea" type="nav.py" name="kingfisher_nav" output="screen">
+    <node pkg="kingfisher_nmea" type="nav.py" name="nmea_nav" output="screen">
     </node>
  
     <!-- Publishes $CPIMU and $CPRCM messages -->
