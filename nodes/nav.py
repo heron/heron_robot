@@ -7,6 +7,7 @@ from nmea_helpers import TxHelper
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from enu.srv import ToFix
 from math import degrees, floor, fabs
+from rpy_helpers import sea_rpy_from_quaternion
 
 
 def nmea_deg(decimal_degrees):
@@ -26,20 +27,54 @@ class Nav(TxHelper):
   def __init__(self):
     rospy.wait_for_service('pose_to_fix')
     self.to_fix = rospy.ServiceProxy('pose_to_fix', ToFix)
-    self.sub = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
+    self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
+    self.sub_vel = rospy.Subscriber("gps/vel", Vector3Stamped, self._vel)
+    self.vel = None
+
+  def _vel(self, msg):
+    self.vel = msg
 
   def _cb(self, msg):
     fix = self.to_fix(msg.pose).fix
+    roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
+    
+    # Override heading with value from GPS, when we have sufficient speed.
+    if self.vel and hypot(vel.vector.y, vel.vector.x) > 0.2:
+      heading = (pi/2.0) - atan2(vel.vector.y, vel.vector.x)
+      if heading < 0: heading += 2*pi
 
     self.tx(self.gps_time(),
         nmea_deg(fix.latitude), nmea_NS(fix.latitude),
         nmea_deg(fix.longitude), nmea_NS(fix.longitude),
         1, # Pos quality
         0, # Depth
-        0, # Heading
-        0, # Roll
-        0, # Pitch
+        degrees(heading), # Heading    ##### TODO, should be transit direction, not direction of bow.
+        degrees(roll), # Roll
+        degrees(pitch), # Pitch
         self.gps_time(msg.header.stamp))
+
+
+class VelRate(TxHelper):
+  SENTENCE = "NVR" 
+
+  def __init__(self):
+    self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
+    self.sub_vel = rospy.Subscriber("gps/vel", Vector3Stamped, self._vel)
+
+  def _vel(self, msg):
+    self.vel = msg
+
+  def _cb(self, msg):
+    if self.vel:
+      self.tx(self.gps_time(),
+          self.vel.vector.x,
+          self.vel.vector.y,
+          0,  # Vertical component of transit velocity
+          -degrees(msg.angular_velocity.y)  # Pitch rate
+          degrees(msg.angular_velocity.x)  # Roll rate
+          -degrees(msg.angular_velocity.z)  # Yaw rate
+
+
 
 if __name__ == "__main__":
   rospy.init_node('nmea_nav')

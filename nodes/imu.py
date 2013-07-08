@@ -4,11 +4,11 @@ import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
 from nmea_helpers import TxHelper
+from rpy_helpers import sea_rpy_from_quaternion
+
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Vector3Stamped
-from math import degrees, pi
-
-from tf.transformations import euler_from_quaternion
+from math import degrees
 
 
 class RawIMU(TxHelper):
@@ -18,13 +18,16 @@ class RawIMU(TxHelper):
     rospy.Subscriber("imu/data", Imu, self._cb)
 
   def _cb(self, msg):
+    # Must convert these values:
+    #  ROS frame: X forward, Y to port, Z up
+    #  Sea frame: X forward, Y to starboard, Z down
     self.tx(self.gps_time(msg.header.stamp),
         degrees(msg.angular_velocity.x),
-        degrees(msg.angular_velocity.y),
-        degrees(msg.angular_velocity.z),
+        -degrees(msg.angular_velocity.y),
+        -degrees(msg.angular_velocity.z),
         msg.linear_acceleration.x,
-        msg.linear_acceleration.y,
-        msg.linear_acceleration.z)
+        -msg.linear_acceleration.y,
+        -msg.linear_acceleration.z)
 
 
 class RawCompass(TxHelper):
@@ -35,16 +38,13 @@ class RawCompass(TxHelper):
     self.compass_id = 0
 
   def _cb(self, msg):
-    q = msg.orientation
-    x, y, z = euler_from_quaternion([ getattr(q, f) for f in q.__slots__ ])
-    z_ned = (pi/2) - z
-    if z_ned < 0: z_ned += 2*pi
+    roll, pitch, heading = sea_rpy_from_quaternion(msg.orientation)
 
     self.tx(self.gps_time(),
         self.compass_id,
-        degrees(z_ned),
-        degrees(y),
-        degrees(x),
+        degrees(heading),
+        degrees(pitch),
+        degrees(roll),
         self.gps_time(msg.header.stamp))
 
 
