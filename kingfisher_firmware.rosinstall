@@ -1,6 +1,6 @@
-- other: {local-name: /opt/ros/fuerte/share/ros}
-- other: {local-name: /opt/ros/fuerte/share}
-- other: {local-name: /opt/ros/fuerte/stacks}
-- setup-file: {local-name: /opt/ros/fuerte/setup.sh}
-- git: {local-name: kingfisher, uri: 'https://github.com/clearpathrobotics/kingfisher.git'}
-- git: {local-name: kingfisher_firmware, uri: 'ssh://internal.clearpathrobotics.com:1222/git/CPR/kingfisher_firmware.git'}
+- git: {local-name: rosserial, uri: 'https://github.com/mikepurvis/rosserial.git',
+    version: hydro-devel}
+- git: {local-name: kingfisher_firmware, uri: 'https://bitbucket.org/clearpathrobotics/kingfisher_firmware.git',
+    version: hydro-devel}
+- git: {local-name: kingfisher, uri: 'https://bitbucket.org/clearpathrobotics/kingfisher.git',
+    version: hydro-devel}
