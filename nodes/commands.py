@@ -25,7 +25,6 @@ class YawSpdPublisher(RxHelper):
     self.listen("DEV", self._cb)
 
   def _cb(self, header, fields):
-    rospy.logwarn("PYDEV!")
     heading, speed = fields
     rospy.logwarn(heading)
     rospy.logwarn(speed)
@@ -39,7 +38,6 @@ class DrivePublisher(RxHelper):
     self.listen("DIR", self._cb)
 
   def _cb(self, header, fields):
-    rospy.logwarn("PYDIR!")
     left, right = fields
     self.pub.publish(float(left) * 0.01, float(right) * 0.01)
 

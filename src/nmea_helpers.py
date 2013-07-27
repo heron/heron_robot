@@ -59,17 +59,24 @@ class RxHelper(object):
   TALKER = "PY"
 
   def listen(self, sentence, callback):
+    rospy.loginfo("Setting up listener for %s." % sentence);
     def cb(msg):
+      #rospy.logwarn("Sentence received (%s)." % sentence);
+
+      age = rospy.Time.now() - msg.header.stamp
+      if (age.to_sec() > 0.1):
+        rospy.logwarn("Sentence age is %.4f seconds, dropping." % age.to_sec());
+
       mo = re.match("^\$([A-Za-z0-9,.-]+)\*([0-9A-Za-z]{2})?", msg.sentence)
       if not mo:
-        # Not a sentence
+        rospy.logwarn("Input is not a sentence.");
         return
 
       sentence_body, sentence_checksum = mo.groups()
       if sentence_checksum:
         # By default, checksum is optional on received messages.
         if checksum(sentence_body) != sentence_checksum:
-          # Bad checksum
+          rospy.logwarn("Sentence has bad checksum.");
           return
 
       raw_fields = sentence_body.split(",")
@@ -80,6 +87,7 @@ class RxHelper(object):
           if re.match('^[0-9.]+$', f): return float(f)
           return f
         fields = map(process_field, raw_fields[1:])
+        rospy.loginfo("Calling callback for %s." % sentence);
         callback(msg.header, fields)
-    rospy.Subscriber("rx", Sentence, cb)
+    self.listener_sub = rospy.Subscriber("rx", Sentence, cb, queue_size=1)
 
