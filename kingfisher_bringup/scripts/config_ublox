@@ -1,6 +1,0 @@
-#!/bin/bash
-# usage: config_ublox port input.hex
-sleep 5s
-if [ -e $1 ]; then
-  sed '/^\#/d' $2 | xxd -r -p > $1
-fi
