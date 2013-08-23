@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>kingfisher_bringup</name>
+  <version>0.0.0</version>
+  <description>
+    Provides upstart setup for Kingfisher, and launch files for the standard
+    configuration. Also provides configuration for u-blox GPS receiver
+    and Point Grey camera which are part of Kingfisher's sensor suite.
+  </description>
+  <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- camera -->
+  <run_depend>camera1394</run_depend>
+  <run_depend>image_proc</run_depend>
+  <run_depend>compressed_image_transport</run_depend>
+
+  <!-- GPS -->
+  <run_depend>nmea_comms</run_depend>
+  <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>enu</run_depend>
+
+  <!-- IMU -->
+  <run_depend>um6</run_depend>
+
+  <!-- controls -->
+  <run_depend>kingfisher_node</run_depend>
+</package>
