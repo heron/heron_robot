@@ -7,9 +7,9 @@
     </node>
 
     <!-- interpretation -->
-    <node pkg="nmea_gps_driver" type="nmea_driver.py" name="nmea_topic_driver" />
+    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver" />
 
     <!-- ENU translation -->
-    <!-- <node pkg="enu" type="enu_publisher.py" name="enu_publisher" /> -->
+    <node pkg="enu" type="from_fix" name="enu_from_fix" />
   </group>
 </launch>
