@@ -13,5 +13,5 @@
 - git: {local-name: um6, uri: 'https://github.com/clearpathrobotics/um6.git', version: master}
 - git: {local-name: declination, uri: 'https://github.com/clearpathrobotics/declination.git',
     version: master}
-- git: {local-name: upstart, uri: 'https://bitbucket.org/clearpathrobotics/upstart.git',
+- git: {local-name: robot_upstart, uri: 'https://github.com/clearpathrobotics/robot_upstart.git',
     version: hydro-devel}
