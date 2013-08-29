@@ -6,7 +6,6 @@
     version: hydro-devel}
 - git: {local-name: nmea_msgs, uri: 'https://github.com/ros-drivers/nmea_msgs.git',
     version: hydro-devel}
-- git: {local-name: nmea, uri: 'https://github.com/clearpathrobotics/nmea.git', version: groovy-devel}
 - git: {local-name: nmea_navsat_driver, uri: 'https://github.com/ros-drivers/nmea_navsat_driver.git',
     version: hydro-devel}
 - git: {local-name: enu, uri: 'https://github.com/clearpathrobotics/enu.git', version: groovy}
@@ -14,4 +13,6 @@
 - git: {local-name: declination, uri: 'https://github.com/clearpathrobotics/declination.git',
     version: master}
 - git: {local-name: robot_upstart, uri: 'https://github.com/clearpathrobotics/robot_upstart.git',
+    version: hydro-devel}
+- git: {local-name: nmea_comms, uri: 'https://github.com/clearpathrobotics/nmea_comms.git',
     version: hydro-devel}
