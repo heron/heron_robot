@@ -1,6 +1,0 @@
-- git: {local-name: rosserial, uri: 'https://github.com/clearpathrobotics/rosserial.git',
-    version: hydro-devel}
-- git: {local-name: kingfisher_firmware, uri: 'https://bitbucket.org/clearpathrobotics/kingfisher_firmware.git',
-    version: hydro-devel}
-- git: {local-name: kingfisher, uri: 'https://bitbucket.org/clearpathrobotics/kingfisher.git',
-    version: hydro-devel}

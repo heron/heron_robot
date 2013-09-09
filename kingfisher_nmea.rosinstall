@@ -1,5 +1,0 @@
-- other: {local-name: /opt/ros/fuerte/share/ros}
-- other: {local-name: /opt/ros/fuerte/share}
-- other: {local-name: /opt/ros/fuerte/stacks}
-- setup-file: {local-name: /opt/ros/fuerte/setup.sh}
-- git: {local-name: kingfisher_nmea, uri: 'https://bitbucket.org/clearpathrobotics/kingfisher_nmea.git'}

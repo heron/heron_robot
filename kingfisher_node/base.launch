@@ -1,9 +1,0 @@
-<launch>
-  <!-- TODO: Pass an arg here for launching AVR v. CM3 -->
-
-  <arg name="port" default="/dev/arduino" />
-  <node pkg="rosserial_server" type="rosserial_server_serial_node" name="rosserial_server"
-        args="$(arg port)" respawn="true" />
-  <node pkg="kingfisher_node" type="kingfisher.py" name="kingfisher" />
-  <node pkg="kingfisher_node" type="wifi_monitor.py" name="wifi_monitor" />
-</launch>
