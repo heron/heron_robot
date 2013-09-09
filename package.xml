@@ -24,7 +24,4 @@
 
   <!-- IMU -->
   <run_depend>um6</run_depend>
-
-  <!-- controls -->
-  <run_depend>kingfisher_node</run_depend>
 </package>
