@@ -9,6 +9,7 @@ rospd kingfisher_bringup/udev > /dev/null
 echo "Installing udev rules."
 sudo cp *.rules /etc/udev/rules.d/
 popd > /dev/null
+sudo udevadm trigger
 
 # Configure ublox GPS.
 rospd kingfisher_bringup/config > /dev/null
