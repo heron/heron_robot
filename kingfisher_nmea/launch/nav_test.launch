@@ -1,0 +1,20 @@
+<launch>
+  <arg name="nav_rate" default="50" />
+  <arg name="nav_enabled" default="true" />
+
+  <group ns="nmea_if">
+    <!-- Relay GPS vel messages -->
+    <node pkg="topic_tools" type="relay" name="nmea_vel_relay" args="/gps/vel gps/vel">
+    </node>
+
+    <!-- Relay EKF odom topic from pose estimator --> 
+    <node pkg="topic_tools" type="throttle" name="odom_throttle"
+          args="messages /robot_pose_ekf/odom $(arg nav_rate) odom"
+          if="$(arg nav_enabled)" />
+    <node pkg="enu" type="to_fix_service" name="pose_to_fix_service">
+      <remap from="enu_datum" to="/gps/enu_datum" />
+    </node>
+    <node pkg="kingfisher_nmea" type="nav.py" name="kingfisher_nav" output="screen">
+    </node>
+  </group>
+</launch>

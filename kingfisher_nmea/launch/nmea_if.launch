@@ -1,0 +1,57 @@
+<launch>
+  <arg name="imu_enabled" default="true" />
+  <arg name="imu_rate" default="5.0" />
+  <arg name="battery_enabled" default="true" />
+  <arg name="battery_rate" default="0.5" />
+  <arg name="nav_enabled" default="true" />
+  <arg name="nav_rate" default="5.0" />
+ 
+  <group ns="nmea_if">
+    <!-- GPS time offset calculator -->
+    <param name="time_offset_default" value="-14401.595" />
+    <node pkg="kingfisher_nmea" type="gps_time_offset.py" name="time_offset">
+      <remap from="rx" to="/gps/rx" />
+    </node>
+
+    <!-- Relay sentences from GPS receiver --> 
+    <node pkg="topic_tools" type="relay" name="nmea_sentence_relay" args="/gps/rx tx">
+    </node>
+
+    <!-- Relay GPS vel messages (for NVG and NVR messages) -->
+    <node pkg="topic_tools" type="relay" name="nmea_vel_relay" args="/gps/vel gps/vel">
+    </node>
+
+    <!-- Publishes $CPNVG and $CPNVR messages --> 
+    <node pkg="topic_tools" type="throttle" name="odom_throttle"
+          args="messages /robot_pose_ekf/odom $(arg nav_rate) odom"
+          if="$(arg nav_enabled)" />
+    <node pkg="enu" type="to_fix_service" name="pose_to_fix_service">
+      <remap from="enu_datum" to="/gps/enu_datum" />
+    </node>
+    <node pkg="kingfisher_nmea" type="nav.py" name="nmea_nav" output="screen">
+    </node>
+ 
+    <!-- Publishes $CPIMU and $CPRCM messages -->
+    <node pkg="topic_tools" type="throttle" name="imu_throttle"
+          args="messages /imu/data_final $(arg imu_rate) imu/data"
+          if="$(arg imu_enabled)" />
+    <node pkg="kingfisher_nmea" type="imu.py" name="nmea_imu" />
+  
+    <!-- Publishes $CPRBS messages -->
+    <node pkg="topic_tools" type="throttle" name="battery_throttle"
+          args="messages /sense $(arg battery_rate) sense"
+          if="$(arg battery_enabled)" />
+    <node pkg="kingfisher_nmea" type="battery.py" name="nmea_battery" />
+
+    <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
+    <node pkg="kingfisher_nmea" type="commands.py" name="nmea_commands" output="screen">
+      <remap from="cmd_drive" to="/cmd_drive" />
+      <remap from="cmd_helm" to="/cmd_helm" />
+      <remap from="cmd_yawspd" to="/cmd_yawspd" />
+    </node>
+
+    <!-- NMEA KF interface -->
+    <node pkg="nmea_comms" type="nmea_socket_node" name="socket_node">
+    </node>
+  </group>
+</launch>
