@@ -13,6 +13,9 @@
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>robot_upstart</run_depend>
 
+  <!-- MCU -->
+  <run_depend>rosserial_server</run_depend>
+
   <!-- camera -->
   <run_depend>camera1394</run_depend>
   <run_depend>image_proc</run_depend>
