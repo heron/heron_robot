@@ -1,3 +1,0 @@
-<launch>
-  <include file="$(find kingfisher_node)/base.launch" />
-</launch>

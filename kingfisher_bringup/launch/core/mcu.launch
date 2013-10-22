@@ -1,0 +1,8 @@
+<launch>
+  <arg name="port" default="/dev/arduino" />
+  <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
+    <param name="port" value="$(arg port)" />
+    <remap from="has_wifi" to="/wireless/connected" />
+  </node>
+  <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+</launch>

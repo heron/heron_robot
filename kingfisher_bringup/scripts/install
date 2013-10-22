@@ -1,8 +1,17 @@
 #!/bin/bash
 source `rospack find rosbash`/rosbash
 
+# Check for kingfisher_controller package.
+rospack find kingfisher_controller > /dev/null
+if [[ "$?" != "0" ]]; then
+  echo "Cannot find kingfisher_controller package. Please contact Clearpath Robotics"
+  echo "for instructions on installing the Kingfisher supplementary packages."
+  exit 1 
+fi
+
 # Install the upstart job and launch files.
-rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core
+rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core --interface eth0
+rosrun robot_upstart install kingfisher_controller/launch --job kingfisher-core --augment
 
 # Install the udev rules.
 rospd kingfisher_bringup/udev > /dev/null

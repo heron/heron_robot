@@ -1,6 +1,0 @@
-<launch>
-  <node pkg="kingfisher_bringup" type="netserial" name="netserial_gps"
-        args="2525 /tmp/ublox_user 19200" respawn="true" />
-  <node pkg="kingfisher_bringup" type="netserial" name="netserial_sonar" 
-        args="2526 /tmp/sonar_user 9600" respawn="true" />
-</launch>

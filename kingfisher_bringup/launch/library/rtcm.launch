@@ -1,4 +1,0 @@
-<launch>
-  <node pkg="kingfisher_bringup" type="bridge" name="rtcm_bridge"
-        args="2525 /tmp/gps_user 57600" respawn="true" />
-</launch>
