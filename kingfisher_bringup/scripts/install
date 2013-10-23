@@ -10,7 +10,9 @@ if [[ "$?" != "0" ]]; then
 fi
 
 # Install the upstart job and launch files.
-rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core --interface eth0
+rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core \
+                               --interface ${1-${ROBOT_NETWORK-eth0}} \
+                               --setup ${ROBOT_SETUP-$(roscd; echo `pwd`/setup.bash)}
 rosrun robot_upstart install kingfisher_controller/launch --job kingfisher-core --augment
 
 # Install the default compass calibration.
