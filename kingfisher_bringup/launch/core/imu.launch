@@ -14,11 +14,17 @@
     <rosparam file="/etc/ros/$(env ROS_DISTRO)/imu_compass.yaml" />
   </node>
 
-  <!-- Apply computed compass declination to the IMU message. This functionality will likely
-       be incorporated into imu_compass at a later point. -->
-  <node pkg="declination" type="apply_to_imu" name="declination_imu" ns="imu">
-    <param name="default" value="-0.1693"  />
-    <remap from="data" to="data_compass" />
-    <remap from="data_decl" to="data_final" />
-  </node> 
+  <group ns="imu">
+    <node pkg="declination" type="compute" name="declination_compute">
+      <remap from="fix" to="/navsat/fix" />
+    </node>
+
+    <!-- Apply computed compass declination to the IMU message. This functionality will likely
+         be incorporated into imu_compass at a later point. -->
+    <node pkg="declination" type="apply_to_imu" name="declination_imu">
+      <param name="default" value="-0.1693"  />
+      <remap from="data" to="data_compass" />
+      <remap from="data_decl" to="data_final" />
+    </node> 
+  </group>
 </launch>
