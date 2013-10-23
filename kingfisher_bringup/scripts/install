@@ -13,6 +13,24 @@ fi
 rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core --interface eth0
 rosrun robot_upstart install kingfisher_controller/launch --job kingfisher-core --augment
 
+# Install the default compass calibration.
+COMPASS_YAML=/etc/ros/$ROS_DISTRO/imu_compass.yaml
+if [ -e "$COMPASS_YAML" ]; then
+  echo "Compass yaml config already exists, skipping."
+else 
+  echo "Installing compass yaml file to $COMPASS_YAML"
+  sudo cp "$(rospack find kingfisher_bringup)/config/imu_compass.yaml" "$COMPASS_YAML"
+fi
+
+# Install the default controller configuration.
+CONTROLLER_YAML=/etc/ros/$ROS_DISTRO/kingfisher_controller.yaml
+if [ -e "$CONTROLLER_YAML" ]; then
+  echo "Controller yaml config already exists, skipping."
+else
+  echo "Installing controller yaml file to $CONTROLLER_YAML"
+  sudo cp "$(rospack find kingfisher_controller)/config/kingfisher_controller.yaml" "$CONTROLLER_YAML"
+fi
+
 # Install the udev rules.
 rospd kingfisher_bringup/udev > /dev/null
 echo "Installing udev rules."
