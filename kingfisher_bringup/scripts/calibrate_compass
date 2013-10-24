@@ -1,7 +1,9 @@
 #!/bin/bash
 
-BAG_FILE=/tmp/imu_record.bag
-CAL_FILE=/tmp/imu_compass.yaml
+TEMPDIR=$(mktemp -d --tmpdir calibrate_compass.XXXX)
+BAG_FILE=${TEMPDIR}/imu_record.bag
+CAL_FILE=${TEMPDIR}/imu_compass.yaml
+DURATION=60
 
 ROSTOPIC_OUTPUT=$(rostopic list)
 if [[ "$?" != "0" ]]; then
@@ -10,52 +12,49 @@ if [[ "$?" != "0" ]]; then
   exit 1
 fi
 
-#if [[ "$ROSTOPIC_OUTPUT" =~ imu/mag ]]; then
-#  :
-#else
-#  echo "Please ensure that the /imu/mag and /imu/rpy topics are being broadcast, and re-run this script."
-#  exit 1
-#fi
-
 # Insert check for Kingfisher active?
 
-echo "Starting rosbag record."
-rosbag record /imu/rpy /imu/data /imu/mag --output-name=$BAG_FILE & > /dev/null
+rospack find rosbag > /dev/null
 if [[ "$?" != "0" ]]; then
-  echo "Unable to run rosbag record. Is the ROS environment set up correctly?"
+  echo "Unable to find rosbag record. Is the ROS environment set up correctly?"
   exit 1
 fi
-ROSBAG_PID=$!
 
-echo "Starting motion commands."
-rostopic pub /cmd_drive kingfisher_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
+rospack find kingfisher_msgs
 if [[ "$?" != "0" ]]; then
-  kill $ROSBAG_PID
-  echo "Unable to run rostopic pub. Are the kingfisher messages built and in the ROS_PACKAGE_PATH?"
+  echo "Unable to find kingfisher_msgs. Are the kingfisher messages built and in the ROS_PACKAGE_PATH?"
   exit 1
 fi
+
+rosbag record /tf /imu/rpy /imu/data /imu/mag -O $BAG_FILE --duration $DURATION &
+ROSBAG_PID=$!
+echo "Started rosbag record, duration $DURATION seconds, pid [${ROSBAG_PID}]"
+
+rostopic pub /cmd_drive kingfisher_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
 ROSTOPIC_PID=$!
+echo "Started motion commands, pid [${ROSTOPIC_PID}]"
 
 sleep 2
 
 echo "Test underway."
 
-for i in {0..59}; do
-  echo -en "\rTime remaining: $((60-i))  ";
+for i in $(seq 0 ${DURATION}); do
+  echo -en "\rTime remaining: $((${DURATION}-i))  ";
   sleep 1
 done
 echo
 
-echo "Shutting down rosbag record."
-kill -INT $ROSBAG_PID
-
 echo "Shutting down motion command publisher."
-kill -INT $ROSTOPIC_PID
+kill $ROSTOPIC_PID
+
+sleep 2
+
+echo "Waiting for rosbag to shut down."
 
 sleep 2
 
 echo "Computing magnetic calibration."
-rosrun imu_um6 compute_calibration.py $BAG_FILE $CAL_FILE &> /tmp/compute_output.log
+rosrun imu_compass compute_calibration $BAG_FILE $CAL_FILE &> /tmp/compute_output.log
 if [[ "$?" != "0" ]]; then
   echo "Unable to compute calibration from recorded bag."
   echo "Output in /tmp/compute_output.log"
