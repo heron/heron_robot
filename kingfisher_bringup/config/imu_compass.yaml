@@ -1,7 +1,7 @@
 # Default configuration, replace by running imu_compass/compute_calibration on a bag
 # with the vehicle slowly rotating.
 mag_bias:
-     x: 0.183117
-     y: 0.273127
-     z: -0.761884
-     radius: 0.271064
+  x: 0.183117
+  y: 0.273127
+  z: -0.761884
+  radius: 0.271064
