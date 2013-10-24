@@ -1,3 +1,3 @@
 <launch>
-  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" />
+  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
 </launch>
