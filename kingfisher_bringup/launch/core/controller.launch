@@ -1,6 +1,6 @@
 <launch>
   <rosparam command="load" file="/etc/ros/$(env ROS_DISTRO)/kingfisher_controller.yaml"/>
   <node pkg="kingfisher_controller" type="controller" name="controller">
-    <remap from="imu/data" to="imu/data_final" />
+    <remap from="imu/data" to="imu/data_compass" />
   </node>
 </launch>

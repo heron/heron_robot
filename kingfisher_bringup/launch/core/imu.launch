@@ -7,24 +7,14 @@
 
     <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
          separately, using the imu_compass node below. -->
-    <param name="mag_updates" value="false"/>
+    <param name="mag_updates" value="false" />
   </node>
 
   <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
     <rosparam file="/etc/ros/$(env ROS_DISTRO)/imu_compass.yaml" />
   </node>
 
-  <group ns="imu">
-    <node pkg="declination" type="compute" name="declination_compute">
-      <remap from="fix" to="/navsat/fix" />
-    </node>
-
-    <!-- Apply computed compass declination to the IMU message. This functionality will likely
-         be incorporated into imu_compass at a later point. -->
-    <node pkg="declination" type="apply_to_imu" name="declination_imu">
-      <param name="default" value="-0.1693"  />
-      <remap from="data" to="data_compass" />
-      <remap from="data_decl" to="data_final" />
-    </node> 
-  </group>
+  <node pkg="declination" type="compute" name="declination_compute" ns="imu">
+    <remap from="fix" to="/navsat/fix" />
+  </node>
 </launch>
