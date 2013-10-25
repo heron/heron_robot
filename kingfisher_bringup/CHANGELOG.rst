@@ -2,8 +2,8 @@
 Changelog for package kingfisher_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.2 (2013-10-24)
+------------------
 * New default compass config from CAN22, plus message about running the calibration.
 * rosbag in Hydro can't seem to be kill'd properly, so switch to using the --duration parameter.
 * Add calibrate-compass script from 2013-07 shipment.
