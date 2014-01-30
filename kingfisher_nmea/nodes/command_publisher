@@ -3,8 +3,8 @@
 import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
-from nmea_helpers import RxHelper
-from kingfisher_msgs.msg import Drive, Helm, YawSpd
+from kingfisher_nmea.nmea_helpers import RxHelper
+from kingfisher_msgs.msg import Drive, Helm, Course
 
 from math import radians
 
@@ -19,18 +19,14 @@ class HelmPublisher(RxHelper):
     self.pub.publish(float(thrust_pct) * 0.01, -radians(float(heading_rate)))
 
 
-class YawSpdPublisher(RxHelper):
+class CoursePublisher(RxHelper):
   def __init__(self):
-    self.pub = rospy.Publisher("cmd_yawspd", YawSpd)
+    self.pub = rospy.Publisher("cmd_course", Course)
     self.listen("DEV", self._cb)
 
   def _cb(self, header, fields):
-    heading, speed = fields
-    rospy.logwarn(heading)
-    rospy.logwarn(speed)
-    self.pub.publish(radians(90.0 - float(heading)), float(speed))
-    rospy.logwarn("done")
-
+    yaw, speed = fields
+    self.pub.publish(radians(90.0 - float(yaw)), float(speed))
 
 class DrivePublisher(RxHelper):
   def __init__(self):
@@ -46,6 +42,6 @@ class DrivePublisher(RxHelper):
 if __name__ == "__main__":
   rospy.init_node('nmea_command_handlers')
   HelmPublisher()
-  YawSpdPublisher()
+  CoursePublisher()
   DrivePublisher()
   rospy.spin()

@@ -3,7 +3,7 @@
 import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
-from nmea_helpers import TxHelper
+from kingfisher_nmea.nmea_helpers import TxHelper
 from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
 from enu.srv import ToFix
 from math import degrees, floor, fabs, atan2, hypot, pi

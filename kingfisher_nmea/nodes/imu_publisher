@@ -3,8 +3,8 @@
 import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
-from nmea_helpers import TxHelper
-from rpy_helpers import sea_rpy_from_quaternion
+from kingfisher_nmea.nmea_helpers import TxHelper
+from kingfisher_nmea.rpy_helpers import sea_rpy_from_quaternion
 
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Vector3Stamped

@@ -3,7 +3,7 @@
 import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
-from nmea_helpers import TxHelper
+from kingifhser_nmea.nmea_helpers import TxHelper
 from sensor_msgs.msg import Imu
 
 class Time(TxHelper):

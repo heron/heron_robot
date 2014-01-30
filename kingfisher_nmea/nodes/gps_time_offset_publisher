@@ -3,7 +3,7 @@
 import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
-from nmea_helpers import RxHelper
+from kingfisher_nmea.nmea_helpers import RxHelper
 from std_msgs.msg import Duration, Float64
 
 import re
