@@ -2,8 +2,8 @@
 Changelog for package kingfisher_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2014-01-30)
+------------------
 * Add kingfisher_robot metapackage.
 
 0.0.2 (2013-10-24)

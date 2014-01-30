@@ -2,8 +2,8 @@
 Changelog for package kingfisher_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2014-01-30)
+------------------
 * Catkinization of kingfisher_nmea; still have a service call problem with ENU to resolve.
 
 0.0.2 (2013-10-24)
