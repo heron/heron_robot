@@ -25,11 +25,9 @@
     <node pkg="topic_tools" type="throttle" name="odom_throttle"
           args="messages /robot_pose_ekf/odom $(arg nav_rate) odom"
           if="$(arg nav_enabled)" />
-    <node pkg="enu" type="to_fix_service" name="pose_to_fix_service">
-      <remap from="enu_datum" to="/gps/enu_datum" />
-    </node>
-    <node pkg="kingfisher_nmea" type="nav_publisher" name="nmea_nav" output="screen">
-    </node>
+    <remap from="enu_datum" to="/gps/enu_datum" />
+    <node pkg="enu" type="services" name="enu_services" />
+    <node pkg="kingfisher_nmea" type="nav_publisher" name="nmea_nav" output="screen" />
  
     <!-- Publishes $CPIMU and $CPRCM messages -->
     <node pkg="topic_tools" type="throttle" name="imu_throttle"

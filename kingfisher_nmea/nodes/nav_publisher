@@ -7,7 +7,7 @@ from kingfisher_nmea.nmea_helpers import TxHelper
 from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
 from enu.srv import ToFix
 from math import degrees, floor, fabs, atan2, hypot, pi
-from rpy_helpers import sea_rpy_from_quaternion
+from kingfisher_nmea.rpy_helpers import sea_rpy_from_quaternion
 from sensor_msgs.msg import Imu
 
 
@@ -27,7 +27,7 @@ class Nav(TxHelper):
 
   def __init__(self):
     rospy.wait_for_service('pose_to_fix')
-    self.to_fix = rospy.ServiceProxy('pose_to_fix', ToFix)
+    self.to_fix = rospy.ServiceProxy('point_to_fix', ToFix)
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
     self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
     self.vel = None

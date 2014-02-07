@@ -1,6 +1,4 @@
 
-import roslib; roslib.load_manifest('kingfisher_nmea')
-
 from tf.transformations import euler_from_quaternion
 from math import pi
 
