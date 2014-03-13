@@ -11,6 +11,7 @@
 
   <run_depend>rospy</run_depend>
   <run_depend>enu</run_depend>
+  <run_depend>mjpeg_server</run_depend>
   <run_depend>nmea_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
