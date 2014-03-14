@@ -31,7 +31,7 @@
  
     <!-- Publishes $CPIMU and $CPRCM messages -->
     <node pkg="topic_tools" type="throttle" name="imu_throttle"
-          args="messages /imu/data_final $(arg imu_rate) imu/data"
+          args="messages /imu/data_compass $(arg imu_rate) imu/data"
           if="$(arg imu_enabled)" />
     <node pkg="kingfisher_nmea" type="imu_publisher" name="nmea_imu" />
   

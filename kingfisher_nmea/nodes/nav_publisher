@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest('kingfisher_nmea')
 import rospy
 
 from kingfisher_nmea.nmea_helpers import TxHelper
@@ -26,8 +25,10 @@ class Nav(TxHelper):
   SENTENCE = "NVG" 
 
   def __init__(self):
-    rospy.wait_for_service('pose_to_fix')
-    self.to_fix = rospy.ServiceProxy('point_to_fix', ToFix)
+    rospy.loginfo("Waiting for ENU to_fix service.")
+    rospy.wait_for_service('to_fix')
+    rospy.loginfo("Service found, setting up NVG publisher.")
+    self.to_fix = rospy.ServiceProxy('to_fix', ToFix)
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
     self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
     self.vel = None
