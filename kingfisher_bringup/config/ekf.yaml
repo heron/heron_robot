@@ -1,0 +1,10 @@
+# Launch file parameters for robot_pose_ekf position estimator
+freq: 20.0
+output_frame: "odom"
+sensor_timeout: 1.0
+publish_tf: true
+odom_used: false
+imu_used: true
+gps_used: true
+imu_absolute: true
+vo_used: false

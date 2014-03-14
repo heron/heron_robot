@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" output="screen">
+    <rosparam command="load" file="$(find kingfisher_bringup)/config/ekf.yaml"/>
+    <remap from="gps" to="navsat/enu"/>
+    <remap from="imu_data" to="imu/data_compass"/>
+  </node>
+</launch>
