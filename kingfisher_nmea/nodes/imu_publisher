@@ -4,40 +4,46 @@ import rospy
 
 from kingfisher_nmea.nmea_helpers import TxHelper
 from kingfisher_nmea.rpy_helpers import sea_rpy_from_quaternion
+from tf import TransformListener
 
 from sensor_msgs.msg import Imu
-from geometry_msgs.msg import Vector3Stamped
+from geometry_msgs.msg import Vector3Stamped, QuaternionStamped
 from math import degrees
+from time import sleep
 
 
 class RawIMU(TxHelper):
   SENTENCE = "IMU" 
 
-  def __init__(self):
+  def __init__(self, tf_listener):
     rospy.Subscriber("imu/data", Imu, self._cb)
+    self.tf_listener = tf_listener
 
   def _cb(self, msg):
     # Must convert these values:
     #  ROS frame: X forward, Y to port, Z up
     #  Sea frame: X forward, Y to starboard, Z down
+    base_av = self.tf_listener.transformVector3("/base_link", 
+            Vector3Stamped(msg.header, msg.angular_velocity))
+    base_la = self.tf_listener.transformVector3("/base_link", 
+            Vector3Stamped(msg.header, msg.linear_acceleration))
     self.tx(self.gps_time(msg.header.stamp),
-        degrees(msg.angular_velocity.x),
-        -degrees(msg.angular_velocity.y),
-        -degrees(msg.angular_velocity.z),
-        msg.linear_acceleration.x,
-        -msg.linear_acceleration.y,
-        -msg.linear_acceleration.z)
+        degrees(base_av.vector.x), -degrees(base_av.vector.y), -degrees(base_av.vector.z),
+        base_la.vector.x, -base_la.vector.y, -base_la.vector.z)
 
 
 class RawCompass(TxHelper):
   SENTENCE = "RCM" 
 
-  def __init__(self):
+  def __init__(self, tf_listener):
     rospy.Subscriber("imu/data", Imu, self._cb)
     self.compass_id = 0
+    self.tf_listener = tf_listener
 
   def _cb(self, msg):
-    roll, pitch, heading = sea_rpy_from_quaternion(msg.orientation)
+    base_imu = self.tf_listener.transformQuaternion("/base_link", 
+            QuaternionStamped(msg.header, msg.orientation))
+    roll, pitch, heading = sea_rpy_from_quaternion(base_imu.quaternion)
 
     self.tx(self.gps_time(),
         self.compass_id,
@@ -49,6 +55,9 @@ class RawCompass(TxHelper):
 
 if __name__ == "__main__":
   rospy.init_node('nmea_imu')
-  RawCompass()
-  RawIMU()
+  tf_listener = TransformListener()
+  tf_listener.waitForTransform("/base_link", "/imu_link", rospy.Time(), rospy.Duration(10.0))
+  sleep(1.0)
+  RawCompass(tf_listener)
+  RawIMU(tf_listener)
   rospy.spin()

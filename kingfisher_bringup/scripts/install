@@ -13,6 +13,7 @@ fi
 rosrun robot_upstart install kingfisher_bringup/launch/core --job kingfisher-core \
                                --interface ${1-${ROBOT_NETWORK-eth0}} \
                                --setup ${ROBOT_SETUP-$(roscd; echo `pwd`/setup.bash)}
+rosrun robot_upstart install kingfisher_description/launch --job kingfisher-core --augment
 
 # Install the default compass calibration.
 COMPASS_YAML=/etc/ros/$ROS_DISTRO/imu_compass.yaml
