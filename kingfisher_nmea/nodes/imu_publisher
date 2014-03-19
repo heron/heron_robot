@@ -28,8 +28,12 @@ class RawIMU(TxHelper):
     base_la = self.tf_listener.transformVector3("/base_link", 
             Vector3Stamped(msg.header, msg.linear_acceleration))
     self.tx(self.gps_time(msg.header.stamp),
-        degrees(base_av.vector.x), -degrees(base_av.vector.y), -degrees(base_av.vector.z),
-        base_la.vector.x, -base_la.vector.y, -base_la.vector.z)
+        degrees(base_av.vector.x),
+        -degrees(base_av.vector.y),
+        -degrees(base_av.vector.z),
+        base_la.vector.x,
+        -base_la.vector.y,
+        -base_la.vector.z)
 
 
 class RawCompass(TxHelper):
@@ -47,8 +51,8 @@ class RawCompass(TxHelper):
 
     self.tx(self.gps_time(),
         self.compass_id,
-        degrees(heading),
-        degrees(pitch),
+        (180 - degrees(heading)) % 360,
+        -degrees(pitch),
         degrees(roll),
         self.gps_time(msg.header.stamp))
 

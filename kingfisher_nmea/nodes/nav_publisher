@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import rospy
+from tf import TransformListener
+from time import sleep
 
 from kingfisher_nmea.nmea_helpers import TxHelper
-from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped, Vector3Stamped
 from enu.srv import ToFix
 from math import degrees, floor, fabs, atan2, hypot, pi
 from kingfisher_nmea.rpy_helpers import sea_rpy_from_quaternion
@@ -69,28 +71,34 @@ class Nav(TxHelper):
 class VelRate(TxHelper):
   SENTENCE = "NVR" 
 
-  def __init__(self):
+  def __init__(self, tf_listener):
     self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
     self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
     self.vel = None
+    self.tf_listener = tf_listener
 
   def _vel(self, msg):
     self.vel = msg
 
   def _cb(self, msg):
     if self.vel:
+      base_av = self.tf_listener.transformVector3("/base_link", 
+              Vector3Stamped(msg.header, msg.angular_velocity))
       self.tx(self.gps_time(),
           self.vel.twist.linear.x,
           self.vel.twist.linear.y,
           0,  # Vertical component of transit velocity
-          -degrees(msg.angular_velocity.y),  # Pitch rate
-          degrees(msg.angular_velocity.x), # Roll rate
-          -degrees(msg.angular_velocity.z)) # Yaw rate
+          -degrees(base_av.vector.y),  # Pitch rate
+          degrees(base_av.vector.x), # Roll rate
+          -degrees(base_av.vector.z)) # Yaw rate
 
 
 
 if __name__ == "__main__":
   rospy.init_node('nmea_nav')
+  tf_listener = TransformListener()
+  tf_listener.waitForTransform("/base_link", "/imu_link", rospy.Time(), rospy.Duration(10.0))
+  sleep(1.0)
   Nav()
-  VelRate()
+  VelRate(tf_listener)
   rospy.spin()
