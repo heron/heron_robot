@@ -34,6 +34,9 @@
   <run_depend>um6</run_depend>
   <run_depend>imu_compass</run_depend>
   <run_depend>declination</run_depend>
+   
+  <!-- EKF -->
+  <run_depend>robot_pose_ekf_gpsfix</run_depend>
   
   <!-- Wireless -->
   <run_depend>wireless_watcher</run_depend>

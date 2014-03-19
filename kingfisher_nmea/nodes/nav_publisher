@@ -7,7 +7,7 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
 from enu.srv import ToFix
 from math import degrees, floor, fabs, atan2, hypot, pi
 from kingfisher_nmea.rpy_helpers import sea_rpy_from_quaternion
-from sensor_msgs.msg import Imu
+from sensor_msgs.msg import Imu, NavSatFix
 
 
 def nmea_deg(decimal_degrees):
@@ -30,14 +30,23 @@ class Nav(TxHelper):
     rospy.loginfo("Service found, setting up NVG publisher.")
     self.to_fix = rospy.ServiceProxy('to_fix', ToFix)
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
-    self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
+    self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
+    self.sub_enu_datum = rospy.Subscriber("navsat/enu_datum", NavSatFix, self._enu_datum)
     self.vel = None
+    self.enu_datum = None
 
   def _vel(self, msg):
     self.vel = msg
 
+  def _enu_datum(self, msg):
+    self.enu_datum = msg
+
   def _cb(self, msg):
-    fix = self.to_fix(msg.pose).fix
+    if not self.enu_datum:
+      rospy.logwarn("Can't publish nav without enu datum.")
+      return
+
+    fix = self.to_fix(self.enu_datum, msg.pose.pose.position).llh
     roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
     
     # Override heading with value from GPS, when we have sufficient speed.
@@ -62,7 +71,7 @@ class VelRate(TxHelper):
 
   def __init__(self):
     self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
-    self.sub_vel = rospy.Subscriber("gps/vel", TwistStamped, self._vel)
+    self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
     self.vel = None
 
   def _vel(self, msg):
