@@ -12,5 +12,5 @@ install(DIRECTORY config/
 install(DIRECTORY udev/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/udev)
 
-install(PROGRAMS scripts/install
+install(PROGRAMS scripts/install scripts/calibrate_compass
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
