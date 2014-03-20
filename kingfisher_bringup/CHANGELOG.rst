@@ -2,8 +2,8 @@
 Changelog for package kingfisher_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.4 (2014-03-19)
+------------------
 * Install calibrate_compass script.
 * Switch to internal robot_pose_ekf fork (for now)
 * Add description.launch to basic install
