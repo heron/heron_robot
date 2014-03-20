@@ -2,6 +2,15 @@
 Changelog for package kingfisher_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Install calibrate_compass script.
+* Switch to internal robot_pose_ekf fork (for now)
+* Add description.launch to basic install
+* Add robot_pose_ekf to default launchers.
+* Add wireless_watcher dependency.
+* Contributors: Mike Purvis
+
 0.0.2 (2013-10-24)
 ------------------
 * New default compass config from CAN22, plus message about running the calibration.

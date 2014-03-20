@@ -2,6 +2,13 @@
 Changelog for package kingfisher_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes for NMEA interface spec.
+* Catkin fixes to the nmea python scripts.
+* Add mjpeg_server dependency
+* Contributors: Mike Purvis
+
 0.0.3 (2014-01-30)
 ------------------
 * Catkinization of kingfisher_nmea; still have a service call problem with ENU to resolve.

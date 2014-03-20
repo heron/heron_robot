@@ -14,6 +14,7 @@
 
   <!-- scripts/install -->
   <run_depend>robot_upstart</run_depend>
+  <run_depend>kingfisher_description</run_depend>
 
   <!-- MCU -->
   <run_depend>kingfisher_msgs</run_depend>
