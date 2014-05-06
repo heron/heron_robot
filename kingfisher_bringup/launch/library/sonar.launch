@@ -1,0 +1,15 @@
+<launch>
+  <group ns="sonar">
+    <!-- sonar serial comms -->
+    <node pkg="nmea_comms" type="serial_node" name="nmea_sonar_node">
+      <param name="port" value="$(optenv KINGFISHER_SONAR_PORT /dev/clearpath/sensor)" />
+      <param name="baud" value="$(optenv KINGFISHER_SONAR_BAUD 9600)" />
+    </node>
+
+    <!-- sonar socket -->
+    <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
+          if="$(optenv KINGFISHER_SONAR_SOCKET false)" >
+      <param name="port" value="$(optenv KINGFISHER_NAVSAT_SOCKET_PORT 2526)" />
+    </node>
+  </group>
+</launch>
