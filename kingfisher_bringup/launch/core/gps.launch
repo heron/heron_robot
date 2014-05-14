@@ -7,9 +7,11 @@
     </node>
    
     <!-- GPS NMEA socket -->
-    <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node" 
-          if="$(optenv KINGFISHER_NAVSAT_SOCKET false)" >
-      <param name="port" value="$(optenv KINGFISHER_NAVSAT_SOCKET_PORT 2525)" />
+    <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
+          if="$(optenv KINGFISHER_NAVSAT_SOCKET false)">
+      <param name="port" value="$(optenv KINGFISHER_NAVSAT_SOCKET_PORT 2525)"/>
+      <remap from="tx" to="rx" />
+      <!--remap from="nmea_sentence_out" to="socket_out" -->
     </node>
 
     <!-- RTCM serial stream -->
