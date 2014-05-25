@@ -2,16 +2,15 @@
   <!-- GPS serial comms -->
   <group ns="navsat">
     <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
-      <param name="port" value="$(optenv KINGFISHER_NAVSAT_PORT /dev/clearpath/gps)" />
-      <param name="baud" value="$(optenv KINGFISHER_NAVSAT_BAUD 115200)" />
+      <param name="port" value="$(optenv KINGFISHER_NAVSAT_PORT /dev/ublox)"/>
+      <param name="baud" value="$(optenv KINGFISHER_NAVSAT_BAUD 115200)"/>
     </node>
    
     <!-- GPS NMEA socket -->
     <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
           if="$(optenv KINGFISHER_NAVSAT_SOCKET false)">
       <param name="port" value="$(optenv KINGFISHER_NAVSAT_SOCKET_PORT 2525)"/>
-      <remap from="tx" to="rx" />
-      <!--remap from="nmea_sentence_out" to="socket_out" -->
+      <remap from="tx" to="rx"/>
     </node>
 
     <!-- RTCM serial stream -->
@@ -22,14 +21,14 @@
 
     <!-- interpretation -->
     <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver">
-      <remap from="nmea_sentence" to="rx" />
+      <remap from="nmea_sentence" to="rx"/>
     </node>
 
     <!-- ENU translation -->
     <node pkg="enu" type="from_fix" name="enu_from_fix">
-      <param name="invalid_covariance_value" value="1000000" />
-      <param name="lock_altitude" value="0" />
-      <param name="scale_covariance" value="0.05" />
+      <param name="invalid_covariance_value" value="1000000"/>
+      <param name="lock_altitude" value="0"/>
+      <param name="scale_covariance" value="0.05"/>
     </node>
   </group>
 </launch>
