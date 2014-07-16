@@ -2,6 +2,6 @@
   <group ns="sonar">
     <!-- sonar serial comms -->
     <node pkg="kingfisher_bringup" type="netserial" name="netserial_sonar"
-      args="2526 /dev/clearpath/sensor 9600" respawn="true"/>
+      args="2526 /dev/clearpath/sonar 9600" respawn="true"/>
   </group>
 </launch>
