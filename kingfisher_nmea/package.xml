@@ -16,6 +16,7 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
+  <run_depend>nmea_comms</run_depend>
   <run_depend>kingfisher_msgs</run_depend>
   <run_depend>tf</run_depend>
 </package>
