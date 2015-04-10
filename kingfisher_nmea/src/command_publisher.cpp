@@ -56,7 +56,7 @@ public:
   Helper(ros::NodeHandle* nh, std::string sentence_type, callback_fn_t callback_fn) :
     sentence_type_(sentence_type),
     callback_fn_(callback_fn),
-    sub_(nh->subscribe("nmea_sentence", 1, &Helper::cb, this))
+    sub_(nh->subscribe("rx" /*"nmea_sentence"*/, 1, &Helper::cb, this))
   {
   }
 
