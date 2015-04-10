@@ -178,5 +178,7 @@ int main(int argc, char **argv) {
 
   ros::NodeHandle nh;
   DrivePublisher dp(&nh);
+  HelmPublisher hp(&nh);
+  CoursePublisher cp(&nh);
   ros::spin();
 }
