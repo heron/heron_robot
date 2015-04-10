@@ -27,7 +27,7 @@
           if="$(arg nav_enabled)" />
     <remap from="navsat/enu_datum" to="/navsat/enu_datum" />
     <node pkg="enu" type="services" name="enu_services" />
-    <node pkg="kingfisher_nmea" type="nav_publisher" name="nmea_nav" output="screen" />
+    <node pkg="kingfisher_nmea" type="nav_publisher" name="nmea_nav" />
  
     <!-- Publishes $CPIMU and $CPRCM messages -->
     <node pkg="topic_tools" type="throttle" name="imu_throttle"
@@ -42,7 +42,7 @@
     <node pkg="kingfisher_nmea" type="battery_publisher" name="nmea_battery" />
 
     <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
-    <node pkg="kingfisher_nmea" type="command_publisher" name="nmea_commands" output="screen">
+    <node pkg="kingfisher_nmea" type="command_publisher" name="nmea_commands">
       <remap from="cmd_drive" to="/cmd_drive" />
       <remap from="cmd_helm" to="/cmd_helm" />
       <remap from="cmd_course" to="/cmd_course" />
