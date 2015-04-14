@@ -2,6 +2,9 @@
 Changelog for package kingfisher_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.0.4 (2014-03-19)
 ------------------
 

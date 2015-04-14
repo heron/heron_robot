@@ -2,6 +2,15 @@
 Changelog for package kingfisher_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Instantiate Helm and Course classes as well as Drive.
+* Fix topic name for Hydro, will change back on Indigo.
+* Remove screen output tags from launch file.
+* Add C++ implementation of command_publisher.
+* changes to nmea gps and serial bringup and added rtcm netserial stream
+* Contributors: Andrew Blakey, Mike Purvis
+
 0.0.4 (2014-03-19)
 ------------------
 * Fixes for NMEA interface spec.

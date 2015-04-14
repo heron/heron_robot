@@ -2,6 +2,15 @@
 Changelog for package kingfisher_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add echosounder nmea topic
+* Changed sensor to sonar to be more descriptive.
+* set ublox back as default. Minor syntax changes.
+* Setup sonar, gps, rtcm
+* changes to nmea gps and serial bringup and added rtcm netserial stream
+* Contributors: Andrew Blakey, Graeme Yeates, Mike Purvis, andrew_blakey
+
 0.0.4 (2014-03-19)
 ------------------
 * Install calibrate_compass script.
