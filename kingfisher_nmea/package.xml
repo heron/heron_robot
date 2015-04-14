@@ -9,6 +9,14 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>roscpp</build_depend>
+  <build_depend>kingfisher_msgs</build_depend>
+  <build_depend>nmea_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
+
+  <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>enu</run_depend>
   <run_depend>mjpeg_server</run_depend>
