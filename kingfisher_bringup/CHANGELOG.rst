@@ -2,8 +2,8 @@
 Changelog for package kingfisher_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.5 (2015-04-14)
+------------------
 * Add echosounder nmea topic
 * Changed sensor to sonar to be more descriptive.
 * set ublox back as default. Minor syntax changes.

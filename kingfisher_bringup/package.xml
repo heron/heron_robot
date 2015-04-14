@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>kingfisher_bringup</name>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <description>
     Provides upstart setup for Kingfisher, and launch files for the standard
     configuration. Also provides configuration for u-blox GPS receiver

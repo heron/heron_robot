@@ -2,8 +2,8 @@
 Changelog for package kingfisher_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.5 (2015-04-14)
+------------------
 * Instantiate Helm and Course classes as well as Drive.
 * Fix topic name for Hydro, will change back on Indigo.
 * Remove screen output tags from launch file.
