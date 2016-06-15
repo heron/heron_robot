@@ -1,0 +1,6 @@
+<launch>
+  <rosparam command="load" file="/etc/ros/$(env ROS_DISTRO)/heron_controller.yaml"/>
+  <node pkg="heron_controller" type="controller" name="controller">
+    <remap from="imu/data" to="imu/data_compass" />
+  </node>
+</launch>

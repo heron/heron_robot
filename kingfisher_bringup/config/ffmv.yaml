@@ -1,9 +1,0 @@
-{auto_brightness: 2, auto_exposure: 2, auto_focus: 5, auto_gain: 2, auto_gamma: 0,
-  auto_hue: 5, auto_iris: 5, auto_saturation: 5, auto_sharpness: 5, auto_shutter: 2,
-  auto_white_balance: 3, auto_zoom: 5, bayer_method: '', bayer_pattern: gbrg, binning_x: 0,
-  binning_y: 0, brightness: 138.0, camera_info_url: 'package://kingfisher_bringup/config/camera.yaml', exposure: 0.0, focus: 0.0,
-  format7_color_coding: raw8, format7_packet_size: 0, frame_id: /camera, frame_rate: 10.0,
-  gain: 12.041193008422852, gamma: 1.2000000000000002, guid: '', hue: 0.0,
-  iris: 8.0, iso_speed: 400, reset_on_open: false, roi_height: 0, roi_width: 0, saturation: 1.0,
-  sharpness: 1.0, shutter: 0.066243231296539307, use_ros_time: true, video_mode: 1280x960_mono8,
-  white_balance_BU: 700.0, white_balance_RV: 512.0, x_offset: 0, y_offset: 0, zoom: 0.0}

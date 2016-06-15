@@ -1,0 +1,7 @@
+<launch>
+  <group ns="sonar">
+    <!-- sonar serial comms -->
+    <node pkg="heron_bringup" type="netserial" name="netserial_sonar"
+      args="2526 /dev/clearpath/sonar 9600" respawn="true"/>
+  </group>
+</launch>

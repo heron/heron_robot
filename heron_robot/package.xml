@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>heron_robot</name>
+  <version>0.0.5</version>
+  <description>Metapackage of what goes on the Heron by default.</description>
+  <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>heron_bringup</run_depend>
+  <run_depend>heron_controller</run_depend>
+  <run_depend>heron_firmware</run_depend>
+  <run_depend>heron_nmea</run_depend>
+  <export>
+    <metapackage/>
+  </export>
+</package>
