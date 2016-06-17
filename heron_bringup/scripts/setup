@@ -1,0 +1,19 @@
+#!/bin/bash
+source `rospack find rosbash`/rosbash
+
+# Install the udev rules.
+rospd heron_bringup/udev > /dev/null
+echo "Installing udev rules."
+sudo cp *.rules /etc/udev/rules.d/
+popd > /dev/null
+sudo udevadm trigger
+
+# Configure ublox GPS.
+rospd heron_bringup/config > /dev/null
+if [ -e /dev/ublox ]; then
+  echo "Attempting to configure ublox GPS."
+  sed '/^\#/d' ublox.hex | xxd -r -p > /dev/ublox
+else
+  echo "Can't find ublox GPS to configure it. Please replug it and rerun this script."
+fi
+popd > /dev/null
