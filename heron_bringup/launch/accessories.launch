@@ -1,0 +1,27 @@
+<!--
+Launch driver components of Heron's supported accessories.
+
+Be careful that the defaults in this file are kept aligned with those
+in the URDF. See heron_description/urdf/accessories.urdf.xacro.
+-->
+<launch>
+  <!-- Optional upgraded GPS receiver. -->
+  <group ns="navsat/upgrade" if="$(optenv HERON_NAVSAT_SMART6 0)">
+    <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node" output="screen">
+      <param name="port" value="$(optenv HERON_NAVSAT_SMART6_PORT /dev/clearpath/gps)" />
+      <param name="baud" value="$(optenv HERON_NAVSAT_SMART6_BAUD 57600)" />
+      <param name="frame_id" value="$(optenv HERON_NAVSAT_SMART6_MOUNT rear)_navsat" />
+    </node>
+
+    <!-- NMEA Interpretation -->
+    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver" />
+
+    <!-- Optional RTK relay -->
+    <group if="$(optenv HERON_NAVSAT_SMART6_RTK 0)">
+      <node pkg="heron_bringup" type="navsat_rtk_relay" name="navsat_rtk_relay"
+            args="--serial-port /dev/clearpath/rtcm
+                  --device $(optenv HERON_NAVSAT_SMART6_RTK_DEVICE wlan0)
+                  --baud $(optenv HERON_NAVSAT_SMART6_RTK_BAUD 57600)" />
+    </group>
+  </group>
+</launch>

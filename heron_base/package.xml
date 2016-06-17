@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>heron_base</name>
+  <version>0.0.0</version>
+  <description>Heron's mobility and sensor base.</description>
+
+  <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
+  <author email="mpurvis@clearpathrobotics.com">Mike Purvis</author>
+
+  <license>BSD</license>
+
+  <url type="website">http://wiki.ros.org/Robots/Heron</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roslaunch</build_depend>
+
+  <run_depend>heron_description</run_depend>
+  <run_depend>robot_upstart</run_depend>
+  <run_depend>heron_msgs</run_depend>
+  <run_depend>nmea_msgs</run_depend>
+  <run_depend>nmea_comms</run_depend>
+  <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>enu</run_depend>
+  <run_depend>rosserial_python</run_depend>
+  <run_depend>rosserial_server</run_depend>
+  <run_depend>um6</run_depend>
+  <run_depend>imu_compass</run_depend>
+  <run_depend>declination</run_depend>
+  <run_depend>robot_pose_ekf_gpsfix</run_depend>
+  <run_depend>wireless_watcher</run_depend>
+
+  <export>
+  </export>
+</package>

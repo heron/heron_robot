@@ -12,33 +12,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!-- scripts/install -->
-  <run_depend>robot_upstart</run_depend>
-  <run_depend>heron_description</run_depend>
-
-  <!-- MCU -->
-  <run_depend>heron_msgs</run_depend>
-  <run_depend>rosserial_server</run_depend>
-  <run_depend>rosserial_python</run_depend>
-
   <!-- camera -->
   <run_depend>camera1394</run_depend>
   <run_depend>image_proc</run_depend>
   <run_depend>compressed_image_transport</run_depend>
 
-  <!-- GPS -->
-  <run_depend>nmea_comms</run_depend>
-  <run_depend>nmea_navsat_driver</run_depend>
-  <run_depend>enu</run_depend>
-
-  <!-- IMU -->
-  <run_depend>um6</run_depend>
-  <run_depend>imu_compass</run_depend>
-  <run_depend>declination</run_depend>
-   
-  <!-- EKF -->
-  <run_depend>robot_pose_ekf_gpsfix</run_depend>
-  
-  <!-- Wireless -->
-  <run_depend>wireless_watcher</run_depend>
+  <export>
+  </export>
 </package>

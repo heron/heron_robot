@@ -1,0 +1,70 @@
+<launch>
+  <include file="$(find heron_description)/launch/description.launch" />
+
+  <arg name="port" default="/dev/arduino" />
+  <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
+    <param name="port" value="$(arg port)" />
+    <remap from="has_wifi" to="/wireless/connected" />
+  </node>
+
+  <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
+  <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+
+  <node pkg="um6" type="um6_driver" name="um6_driver">
+    <param name="port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)"/>
+
+    <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
+         separately, using the imu_compass node below. -->
+    <param name="mag_updates" value="false" />
+  </node>
+
+  <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
+    <rosparam file="/etc/ros/$(env ROS_DISTRO)/imu_compass.yaml" />
+  </node>
+
+  <node pkg="declination" type="compute" name="declination_compute" ns="imu">
+    <remap from="fix" to="/navsat/fix" />
+  </node>
+
+  <!-- GPS serial comms -->
+  <group ns="navsat">
+    <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
+      <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
+      <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
+    </node>
+
+    <!-- GPS NMEA socket -->
+    <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
+          if="$(optenv HERON_NAVSAT_UBLOX_SOCKET 0)">
+      <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_SOCKET_PORT 2525)"/>
+      <remap from="tx" to="rx"/>
+    </node>
+
+    <!-- RTCM serial stream -->
+    <node pkg="heron_bringup" type="netserial" name="netserial_rtcm"
+          if="$(optenv HERON_NAVSAT_UBLOX_RTCM false)"
+          args="2524 /dev/clearpath/rtcm 115200" respawn="true">
+    </node>
+
+    <!-- interpretation -->
+    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver">
+      <remap from="nmea_sentence" to="rx"/>
+    </node>
+
+    <!-- ENU translation -->
+    <node pkg="enu" type="from_fix" name="enu_from_fix">
+      <param name="invalid_covariance_value" value="1000000"/>
+      <param name="lock_altitude" value="0"/>
+      <param name="scale_covariance" value="0.05"/>
+    </node>
+  </group>
+
+  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
+
+  <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
+    <rosparam command="load" file="$(find heron_bringup)/config/ekf.yaml"/>
+    <remap from="gps" to="navsat/enu"/>
+    <remap from="imu_data" to="imu/data_compass"/>
+  </node>
+
+</launch>
