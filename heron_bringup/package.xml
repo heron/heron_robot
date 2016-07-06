@@ -12,6 +12,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>nmea_comms</run_depend>
+  <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>lms1xx</run_depend>
+  <run_depend version_gte="0.1.1">robot_upstart</run_depend>
   <!-- camera -->
   <run_depend>camera1394</run_depend>
   <run_depend>image_proc</run_depend>
