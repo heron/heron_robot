@@ -2,6 +2,12 @@
 Changelog for package heron_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added website URL.
+* Heron rename.
+* Contributors: Tony Baltovski
+
 0.0.5 (2015-04-14)
 ------------------
 

@@ -2,6 +2,13 @@
 Changelog for package heron_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added env-hooks for mag and controller config.  Renamed folder kingfisher to heron.
+* Added dependency on heron_msgs_gencpp.  Switch to system headers and added boost to CMakeLists.txt.
+* Heron rename.
+* Contributors: Tony Baltovski
+
 0.0.5 (2015-04-14)
 ------------------
 * Instantiate Helm and Course classes as well as Drive.

@@ -2,6 +2,18 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added Axis ptz to accessories.
+* Updated nmea_topic_driver remap.
+* Added lms1xx accessory and some missing run dependencies.
+* Added env-hooks for mag and controller config.  Renamed folder kingfisher to heron.
+* Added RTK relay from Jackal.
+* Added heron_base which currently only contains the base launch file and removed the many launch files in heron_bringup. Also, added accessories.launch for optional accessories.
+* Split the old heron_bring/install script into heron_bringup/install script which installs the robot_upstart job and heron_bringup/setup script which performs the configuration for udev rules as well as the ublox.
+* Heron rename.
+* Contributors: Tony Baltovski
+
 0.0.5 (2015-04-14)
 ------------------
 * Add echosounder nmea topic
