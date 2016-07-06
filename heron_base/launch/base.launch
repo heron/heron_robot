@@ -47,9 +47,7 @@
     </node>
 
     <!-- interpretation -->
-    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver">
-      <remap from="nmea_sentence" to="rx"/>
-    </node>
+    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
 
     <!-- ENU translation -->
     <node pkg="enu" type="from_fix" name="enu_from_fix">

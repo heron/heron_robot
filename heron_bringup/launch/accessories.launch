@@ -29,8 +29,8 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
   <group if="$(optenv HERON_LASER 0)">
     <node pkg="lms1xx" name="lms1xx" type="LMS1xx_node">
       <param name="host" value="$(optenv HERON_LASER_HOST 192.168.1.14)" />
-      <param name="frame_id" value="$(optenv  HERON_LASER_MOUNT front)_laser" />
-      <remap from="scan" to="$(optenv  HERON_LASER_TOPIC front/scan)" />
+      <param name="frame_id" value="$(optenv HERON_LASER_MOUNT front)_laser" />
+      <remap from="scan" to="$(optenv HERON_LASER_TOPIC front/scan)" />
     </node>
   </group>
 </launch>
