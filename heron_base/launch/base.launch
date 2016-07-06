@@ -19,7 +19,7 @@
   </node>
 
   <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
-    <rosparam file="/etc/ros/$(env ROS_DISTRO)/imu_compass.yaml" />
+    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
   </node>
 
   <node pkg="declination" type="compute" name="declination_compute" ns="imu">

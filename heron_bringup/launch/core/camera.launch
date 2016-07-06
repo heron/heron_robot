@@ -18,15 +18,6 @@
     <param name="decimation_x" value="2"/>
     <param name="decimation_y" value="2"/>
   </node>
-    
-  <!-- dewarp (broken) -->
-<!--
-  <node pkg="nodelet" type="nodelet" name="image_proc_rectify"
-        args="load image_proc/rectify camera_nodelet_manager">
-    <remap from="image_mono" to="camera/image_raw" />
-    <remap from="image_rect" to="camera/image_rect" />
-  </node>
--->
 
   <!-- Bayer color decoding -->
   <node pkg="nodelet" type="nodelet" name="image_proc_debayer"
