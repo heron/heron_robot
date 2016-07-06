@@ -2,8 +2,8 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.0 (2016-07-06)
+------------------
 * Added Axis ptz to accessories.
 * Updated nmea_topic_driver remap.
 * Added lms1xx accessory and some missing run dependencies.
