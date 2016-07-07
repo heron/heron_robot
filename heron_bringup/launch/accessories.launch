@@ -37,8 +37,8 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
   <!-- Optional LMS1xx-series LIDAR, typically front-facing. -->
   <group if="$(optenv HERON_AXIS_PTZ 0)"  ns="$(optenv HERON_AXIS_PTZ_NAME axis_ptz)">
     <param name="hostname" value="$(optenv HERON_AXIS_PTZ_HOST 192.168.1.13)" />
-    <param name="width" value="$(optenv HERON_AXIS_PTZ_WIDTH 640)" />
-    <param name="height" value="$(optenv HERON_AXIS_PTZ_HEIGHT 480)" />
+    <param name="width" value="$(optenv HERON_AXIS_PTZ_WIDTH 1280)" />
+    <param name="height" value="$(optenv HERON_AXIS_PTZ_HEIGHT 720)" />
 
     <node pkg="axis_camera" type="axis.py" name="axis" />
     <node pkg="axis_camera" type="axis_ptz.py" name="axis_ptz" if="$(optenv HERON_AXIS_PTZ_ENABLE_PTZ 1)" />
@@ -49,7 +49,7 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
       <remap from="out" to="image_raw_out" />
     </node>
 
-    <node pkg="axis_camera" type="teleop.py" name="teleop" if="$(optenv HERON_AXIS_PTZ_ENABLE_TELEOP 1)" />
+    <node pkg="axis_camera" type="teleop.py" name="teleop" if="$(optenv HERON_AXIS_PTZ_ENABLE_TELEOP 1)">
       <param name="enable_button" value="1" />
       <param name="scale_pan_deg" value="25" />
       <param name="scale_tilt_deg" value="25" />
