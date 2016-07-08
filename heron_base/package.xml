@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>heron_base</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>Heron's mobility and sensor base.</description>
 
   <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>

@@ -2,8 +2,8 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2016-07-08)
+------------------
 * Fixed axis ptz comment.
 * Updated Axis PTZ default width and height.
 * Contributors: Tony Baltovski
