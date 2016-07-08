@@ -34,7 +34,7 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
     </node>
   </group>
 
-  <!-- Optional LMS1xx-series LIDAR, typically front-facing. -->
+  <!-- Optional Axis P5514 PTZ camera, typically front-facing. -->
   <group if="$(optenv HERON_AXIS_PTZ 0)"  ns="$(optenv HERON_AXIS_PTZ_NAME axis_ptz)">
     <param name="hostname" value="$(optenv HERON_AXIS_PTZ_HOST 192.168.1.13)" />
     <param name="width" value="$(optenv HERON_AXIS_PTZ_WIDTH 1280)" />
