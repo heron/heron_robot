@@ -2,6 +2,12 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed axis ptz comment.
+* Updated Axis PTZ default width and height.
+* Contributors: Tony Baltovski
+
 0.1.0 (2016-07-06)
 ------------------
 * Added Axis ptz to accessories.

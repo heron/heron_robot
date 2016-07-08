@@ -2,6 +2,9 @@
 Changelog for package heron_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.0 (2016-07-06)
 ------------------
 * Added env-hooks for mag and controller config.  Renamed folder kingfisher to heron.
