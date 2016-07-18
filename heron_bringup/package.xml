@@ -12,6 +12,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>heron_base</run_depend>
   <run_depend>nmea_comms</run_depend>
   <run_depend>nmea_navsat_driver</run_depend>
   <run_depend>lms1xx</run_depend>
