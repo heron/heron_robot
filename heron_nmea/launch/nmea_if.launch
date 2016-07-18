@@ -7,6 +7,10 @@
   <arg name="nav_rate" default="5.0" />
  
   <group ns="nmea_if">
+   
+    <node pkg="topic_tools" type="relay" name="navsat_sentence_relay"
+          args="/navsat/nmea_sentence /navsat/rx" />
+ 
     <!-- GPS time offset calculator -->
     <param name="time_offset_default" value="-14401.595" />
     <node pkg="heron_nmea" type="gps_time_offset_publisher" name="time_offset">
