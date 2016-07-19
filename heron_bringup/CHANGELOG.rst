@@ -2,6 +2,12 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added controller and ekf to base.launch.
+* Added heron_base as run dependency to heron_bringup.
+* Contributors: Tony Baltovski
+
 0.1.1 (2016-07-08)
 ------------------
 * Fixed axis ptz comment.

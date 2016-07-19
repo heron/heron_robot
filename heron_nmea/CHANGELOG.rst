@@ -2,6 +2,12 @@
 Changelog for package heron_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Set queue_size to python publishers.
+* Added navsat_sentence_relay.
+* Contributors: Tony Baltovski
+
 0.1.1 (2016-07-08)
 ------------------
 
