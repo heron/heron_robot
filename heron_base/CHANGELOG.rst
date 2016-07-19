@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2016-07-19)
+------------------
 * Added tf and heron_controller as run dependency for heron_base.
 * Added controller and ekf to base.launch.
 * Contributors: Tony Baltovski

@@ -2,8 +2,8 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2016-07-19)
+------------------
 * Added controller and ekf to base.launch.
 * Added heron_base as run dependency to heron_bringup.
 * Contributors: Tony Baltovski
