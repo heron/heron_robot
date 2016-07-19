@@ -1,6 +1,0 @@
-<launch>
-  <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-  <node pkg="heron_controller" type="controller" name="controller">
-    <remap from="imu/data" to="imu/data_compass" />
-  </node>
-</launch>

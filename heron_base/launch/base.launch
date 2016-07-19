@@ -19,7 +19,7 @@
   </node>
 
   <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
-    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
+    <rosparam file="$(env HERON_MAG_CONFIG)" />
   </node>
 
   <node pkg="declination" type="compute" name="declination_compute" ns="imu">
@@ -63,6 +63,16 @@
     <rosparam command="load" file="$(find heron_bringup)/config/ekf.yaml"/>
     <remap from="gps" to="navsat/enu"/>
     <remap from="imu_data" to="imu/data_compass"/>
+  </node>
+
+  <!-- Temporarily since robot_pose_ekf_gpsfix is hardcoded with the gps and base_footprint frames. -->
+  <node pkg="tf" type="static_transform_publisher" name="navsat_to_gps_tf" args="0 0 0 0 0 0  navsat gps  20"/>
+  <node pkg="tf" type="static_transform_publisher"
+        name="base_to_basefootprint_tf" args="0 0 0 0 0 0  base_link base_footprint  20"/>
+
+  <node pkg="heron_controller" type="controller" name="controller">
+    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
+    <remap from="imu/data" to="imu/data_compass" />
   </node>
 
 </launch>
