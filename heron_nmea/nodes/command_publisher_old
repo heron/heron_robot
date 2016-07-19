@@ -10,7 +10,7 @@ from math import radians
 
 class HelmPublisher(RxHelper):
   def __init__(self):
-    self.pub = rospy.Publisher("cmd_helm", Helm)
+    self.pub = rospy.Publisher("cmd_helm", Helm, queue_size=1)
     self.listen("DEP", self._cb)
 
   def _cb(self, header, fields):
@@ -20,7 +20,7 @@ class HelmPublisher(RxHelper):
 
 class CoursePublisher(RxHelper):
   def __init__(self):
-    self.pub = rospy.Publisher("cmd_course", Course)
+    self.pub = rospy.Publisher("cmd_course", Course, queue_size=1)
     self.listen("DEV", self._cb)
 
   def _cb(self, header, fields):
@@ -29,7 +29,7 @@ class CoursePublisher(RxHelper):
 
 class DrivePublisher(RxHelper):
   def __init__(self):
-    self.pub = rospy.Publisher("cmd_drive", Drive)
+    self.pub = rospy.Publisher("cmd_drive", Drive, queue_size=1)
     self.listen("DIR", self._cb)
 
   def _cb(self, header, fields):

@@ -21,7 +21,7 @@ class TxHelper(object):
 
   def tx(self, *fields):
     if not hasattr(self, 'tx_publisher'):
-      self.tx_publisher = rospy.Publisher('tx', Sentence)
+      self.tx_publisher = rospy.Publisher('tx', Sentence, queue_size=1)
 
     def process_field(val):
         if isinstance(val, str):
@@ -52,7 +52,7 @@ class TxHelper(object):
     time = rostime - self.time_offset
     dt = datetime.fromtimestamp(time.to_sec())
     return self.GPS_TIME_FORMAT % (dt.hour, dt.minute, float(dt.second) + (float(dt.microsecond) / 1000000))
-    
+
 
 class RxHelper(object):
   TALKER = "PY"
@@ -89,4 +89,3 @@ class RxHelper(object):
         rospy.loginfo("Calling callback for %s." % sentence);
         callback(msg.header, fields)
     self.listener_sub = rospy.Subscriber("rx", Sentence, cb, queue_size=1)
-
