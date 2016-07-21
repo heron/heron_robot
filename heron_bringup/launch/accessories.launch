@@ -5,6 +5,14 @@ Be careful that the defaults in this file are kept aligned with those
 in the URDF. See heron_description/urdf/accessories.urdf.xacro.
 -->
 <launch>
+
+  <!-- Optional RTCM serial stream for the Ublox GPS receiver. -->
+  <node pkg="heron_bringup" type="netserial" name="netserial_rtcm"
+        if="$(optenv HERON_NAVSAT_UBLOX_RTCM false)"
+        args="2524 /dev/clearpath/rtcm 115200" respawn="true">
+  </node>
+
+
   <!-- Optional upgraded GPS receiver. -->
   <group ns="navsat/upgrade" if="$(optenv HERON_NAVSAT_SMART6 0)">
     <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node" output="screen">

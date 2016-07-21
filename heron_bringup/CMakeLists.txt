@@ -10,6 +10,9 @@ install(DIRECTORY launch config udev
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-install(PROGRAMS scripts/install scripts/setup scripts/navsat_rtk_relay
+install(PROGRAMS
+  scripts/install
+  scripts/navsat_rtk_relay
+  scripts/setup
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
