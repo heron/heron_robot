@@ -2,6 +2,11 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed heron_bringup as run dependency from heron_base.
+* Contributors: Tony Baltovski
+
 0.1.3 (2016-07-22)
 ------------------
 * Moved ekf and imu_compass config to heron_base which fixes the circular dependency issues.  Removed camera launch and configuration files.
