@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.4 (2016-07-22)
+------------------
 * Removed heron_bringup as run dependency from heron_base.
 * Contributors: Tony Baltovski
 
