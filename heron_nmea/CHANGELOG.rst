@@ -2,6 +2,9 @@
 Changelog for package heron_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.2 (2016-07-19)
 ------------------
 * Set queue_size to python publishers.

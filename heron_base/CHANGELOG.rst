@@ -2,6 +2,11 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Moved ekf and imu_compass config to heron_base which fixes the circular dependency issues.  Removed camera launch and configuration files.
+* Contributors: Tony Baltovski
+
 0.1.2 (2016-07-19)
 ------------------
 * Added tf and heron_controller as run dependency for heron_base.
