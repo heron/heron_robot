@@ -10,7 +10,7 @@ catkin_add_env_hooks(50.heron_find_controller_config
 catkin_add_env_hooks(50.heron_find_mag_config
     SHELLS sh DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env-hooks)
 
-install(DIRECTORY launch
+install(DIRECTORY config launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 if (CATKIN_ENABLE_TESTING)
