@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>heron_robot</name>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
   <description>Metapackage of what goes on the Heron by default.</description>
   <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
   <license>BSD</license>

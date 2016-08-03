@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.5 (2016-08-03)
+------------------
 * Add missing install rule for heron_base configs.
 * Contributors: Tony Baltovski
 
