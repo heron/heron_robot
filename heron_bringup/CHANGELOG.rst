@@ -2,6 +2,14 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added calibrate_compass and netserial scripts in heron_bringup to be installed.
+* Contributors: Tony Baltovski
+
+* Added calibrate_compass and netserial scripts in heron_bringup to be installed.
+* Contributors: Tony Baltovski
+
 0.1.4 (2016-07-22)
 ------------------
 

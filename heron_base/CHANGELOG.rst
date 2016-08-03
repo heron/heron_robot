@@ -2,6 +2,14 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add missing install rule for heron_base configs.
+* Contributors: Tony Baltovski
+
+* Add missing install rule for heron_base configs.
+* Contributors: Tony Baltovski
+
 0.1.4 (2016-07-22)
 ------------------
 * Removed heron_bringup as run dependency from heron_base.
