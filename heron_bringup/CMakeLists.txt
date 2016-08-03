@@ -11,8 +11,10 @@ install(DIRECTORY launch config udev
 )
 
 install(PROGRAMS
+  scripts/calibrate_compass
   scripts/install
   scripts/navsat_rtk_relay
+  scripts/netserial
   scripts/setup
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
