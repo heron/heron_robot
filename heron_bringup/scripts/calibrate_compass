@@ -3,12 +3,13 @@
 TEMPDIR=$(mktemp -d --tmpdir calibrate_compass.XXXX)
 BAG_FILE=${TEMPDIR}/imu_record.bag
 CAL_FILE=${TEMPDIR}/imu_compass.yaml
+CAL_FINAL_PATH=${ROS_ETC_DIR%/*}/heron_base
 DURATION=60
 
 ROSTOPIC_OUTPUT=$(rostopic list)
 if [[ "$?" != "0" ]]; then
   echo "ROS appears not to be running. Please start ROS service:"
-  echo "sudo service heron-core start"
+  echo "sudo service ros start"
   exit 1
 fi
 
@@ -63,12 +64,13 @@ fi
 
 if [[ -r $CAL_FILE ]]; then
   echo "Calibration generated in $CAL_FILE."
-  read -r -p "Copy calibration to /etc/ros/${ROS_DISTRO}? [Y/n] " response
+  read -r -p "Copy calibration to ${CAL_FINAL_PATH}? [Y/n] " response
   response=${response,,}    # tolower
   if [[ $response =~ ^(no|n)$ ]]; then
     echo "Skipping."
   else
-    sudo cp $CAL_FILE /etc/ros/${ROS_DISTRO}
+    sudo mkdir -p ${CAL_FINAL_PATH}
+    sudo cp $CAL_FILE ${CAL_FINAL_PATH}
     echo "Restart ROS service to begin using saved calibration."
   fi
 fi
