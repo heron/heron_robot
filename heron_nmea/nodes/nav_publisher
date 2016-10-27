@@ -10,6 +10,7 @@ from enu.srv import ToFix
 from math import degrees, floor, fabs, atan2, hypot, pi
 from heron_nmea.rpy_helpers import sea_rpy_from_quaternion
 from sensor_msgs.msg import Imu, NavSatFix
+from std_msgs.msg import Float32
 
 
 def nmea_deg(decimal_degrees):
@@ -24,7 +25,7 @@ def nmea_EW(decimal_degrees):
 
 
 class Nav(TxHelper):
-  SENTENCE = "NVG" 
+  SENTENCE = "NVG"
 
   def __init__(self):
     rospy.loginfo("Waiting for ENU to_fix service.")
@@ -34,8 +35,10 @@ class Nav(TxHelper):
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
     self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
     self.sub_enu_datum = rospy.Subscriber("navsat/enu_datum", NavSatFix, self._enu_datum)
+    self.sub_heading = rospy.Subscriber("/imu/raw_compass_heading", Float32, self._heading)
     self.vel = None
     self.enu_datum = None
+    self.heading = None
 
   def _vel(self, msg):
     self.vel = msg
@@ -43,18 +46,28 @@ class Nav(TxHelper):
   def _enu_datum(self, msg):
     self.enu_datum = msg
 
+  def _heading(self, msg):
+    self.heading = msg
+
   def _cb(self, msg):
     if not self.enu_datum:
       rospy.logwarn("Can't publish nav without enu datum.")
       return
 
     fix = self.to_fix(self.enu_datum, msg.pose.pose.position).llh
-    roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
-    
+
+    if not self.heading:
+      heading = 0.0
+    else:
+      heading = (pi/2.0) - self.heading.data
+
+
     # Override heading with value from GPS, when we have sufficient speed.
     if self.vel and hypot(self.vel.twist.linear.y, self.vel.twist.linear.x) > 0.2:
       heading = (pi/2.0) - atan2(self.vel.twist.linear.y, self.vel.twist.linear.x)
-      if heading < 0: heading += 2*pi
+
+    if heading < 0: 
+      heading += 2*pi
 
     self.tx(self.gps_time(),
         nmea_deg(fix.latitude), nmea_NS(fix.latitude),
@@ -69,7 +82,7 @@ class Nav(TxHelper):
 
 
 class VelRate(TxHelper):
-  SENTENCE = "NVR" 
+  SENTENCE = "NVR"
 
   def __init__(self, tf_listener):
     self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
@@ -82,7 +95,7 @@ class VelRate(TxHelper):
 
   def _cb(self, msg):
     if self.vel:
-      base_av = self.tf_listener.transformVector3("/base_link", 
+      base_av = self.tf_listener.transformVector3("/base_link",
               Vector3Stamped(msg.header, msg.angular_velocity))
       self.tx(self.gps_time(),
           self.vel.twist.linear.x,
@@ -102,3 +115,4 @@ if __name__ == "__main__":
   Nav()
   VelRate(tf_listener)
   rospy.spin()
+

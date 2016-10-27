@@ -54,8 +54,8 @@
 
     <!-- NMEA HERON interface -->
     <node pkg="nmea_comms" type="socket_node" name="socket_node">
-      <remap from="nmea_sentence_out" to="tx" />
-      <remap from="nmea_sentence" to="rx" />
+      <!-- <remap from="nmea_sentence_out" to="tx" /> -->
+      <!-- remap from="nmea_sentence" to="rx" /> -->
     </node>
   </group>
 </launch>
