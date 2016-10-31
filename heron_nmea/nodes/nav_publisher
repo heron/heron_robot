@@ -60,6 +60,8 @@ class Nav(TxHelper):
       heading = 0.0
     else:
       heading = (pi/2.0) - self.heading.data
+    roll = 0.0
+    pitch = 0.0
 
 
     # Override heading with value from GPS, when we have sufficient speed.
