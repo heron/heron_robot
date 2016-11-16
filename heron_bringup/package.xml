@@ -5,9 +5,9 @@
   <description>
     Provides upstart setup for Heron, and launch files for the standard
     configuration. Also provides configuration for u-blox GPS receiver
-    and Point Grey camera which are part of Heron's sensor suite.
+    which is part of Heron's sensor suite.
   </description>
-  <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
+  <maintainer email="tbaltovski@clearpathrobotics.com">Tony Baltovski</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

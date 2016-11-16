@@ -14,7 +14,11 @@ target_link_libraries(${PROJECT_NAME}_command_publisher ${catkin_LIBRARIES} ${Bo
 add_dependencies(${PROJECT_NAME}_command_publisher heron_msgs_gencpp)
 set_target_properties(${PROJECT_NAME}_command_publisher PROPERTIES OUTPUT_NAME command_publisher PREFIX "")
 
-install(TARGETS ${PROJECT_NAME}_command_publisher
+add_executable(${PROJECT_NAME}_sonar_publisher src/sonar_publisher.cpp)
+target_link_libraries(${PROJECT_NAME}_sonar_publisher ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+set_target_properties(${PROJECT_NAME}_sonar_publisher PROPERTIES OUTPUT_NAME sonar_publisher PREFIX "")
+
+install(TARGETS ${PROJECT_NAME}_command_publisher ${PROJECT_NAME}_sonar_publisher
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
