@@ -3,7 +3,7 @@
   <name>heron_nmea</name>
   <version>0.1.5</version>
   <description>The heron_nmea package</description>
-  <maintainer email="mpurvis@clearpathrobotics.com">Mike Purvis</maintainer>
+  <maintainer email="tbaltovski@clearpathrobotics.com">Tony Baltovski</maintainer>
 
   <license>BSD</license>
 

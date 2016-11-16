@@ -65,4 +65,15 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
     </node>
   </group>
 
+  <!-- Optional CEEPULSE Single Beam Echo Sounder. -->
+  <group if="$(optenv HERON_SONAR 0)">
+    <node pkg="nmea_comms" type="serial_node" name="nmea_sonar_serial_node">
+      <param name="port" value="$(optenv HERON_SONAR_PORT /dev/ttyS4)"/>
+      <param name="baud" value="$(optenv HERON_SONAR_BAUD 19200)"/>
+    </node>
+    <group if="$(optenv HERON_SONAR_ROS 1)">
+      <node pkg="heron_nmea" type="sonar_publisher" name="nmea_sonar_publisher" />
+    </group>
+  </group>
+
 </launch>
