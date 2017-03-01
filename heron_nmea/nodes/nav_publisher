@@ -63,12 +63,11 @@ class Nav(TxHelper):
     roll = 0.0
     pitch = 0.0
 
-
     # Override heading with value from GPS, when we have sufficient speed.
     if self.vel and hypot(self.vel.twist.linear.y, self.vel.twist.linear.x) > 0.2:
       heading = (pi/2.0) - atan2(self.vel.twist.linear.y, self.vel.twist.linear.x)
 
-    if heading < 0: 
+    if heading < 0:
       heading += 2*pi
 
     self.tx(self.gps_time(),
@@ -117,4 +116,3 @@ if __name__ == "__main__":
   Nav()
   VelRate(tf_listener)
   rospy.spin()
-

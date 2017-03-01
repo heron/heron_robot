@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(heron_nmea)
 
-find_package(catkin REQUIRED COMPONENTS rospy roscpp nmea_msgs geometry_msgs heron_msgs)
+find_package(catkin REQUIRED COMPONENTS rospy roscpp nmea_msgs geometry_msgs heron_msgs std_msgs)
 
 find_package(Boost REQUIRED)
 
@@ -29,6 +29,7 @@ install(PROGRAMS
   nodes/command_publisher_old
   nodes/gps_time_offset_publisher
   nodes/imu_publisher
+  nodes/lights_publisher
   nodes/nav_publisher
   nodes/tt_publisher
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

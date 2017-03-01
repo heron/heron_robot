@@ -7,7 +7,7 @@ from heron_msgs.msg import Sense
 
 
 class Battery(TxHelper):
-  SENTENCE = "RBS" 
+  SENTENCE = "RBS"
 
   def __init__(self):
     rospy.Subscriber("sense", Sense, self._cb)

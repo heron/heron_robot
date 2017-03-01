@@ -6,7 +6,7 @@ from kingifhser_nmea.nmea_helpers import TxHelper
 from sensor_msgs.msg import Imu
 
 class Time(TxHelper):
-  SENTENCE = "TIME" 
+  SENTENCE = "TIME"
 
   def __init__(self):
     rospy.Timer(rospy.Duration(0.2), self._cb)
