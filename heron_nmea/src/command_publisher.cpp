@@ -41,6 +41,7 @@
 #include "heron_msgs/Drive.h"
 #include "heron_msgs/Helm.h"
 #include "nmea_msgs/Sentence.h"
+#include "std_msgs/Bool.h"
 #include "ros/ros.h"
 
 // Boost provides functions for these, but they're a pain in the butt.
@@ -173,6 +174,27 @@ private:
 };
 
 
+class LightsPublisher : public Helper
+{
+public:
+  LightsPublisher(ros::NodeHandle* nh) :
+    Helper(nh, "PYCLT", boost::bind(&LightsPublisher::cb, this, _1)),
+    pub_(nh->advertise<std_msgs::Bool>("disable_lights", 1))
+  {
+  }
+
+private:
+  void cb(const ros::V_string& fields)
+  {
+    std_msgs::Bool lights_msg;
+    lights_msg.data = boost::lexical_cast<bool>(fields[0]);
+    pub_.publish(lights_msg);
+  }
+
+  ros::Publisher pub_;
+};
+
+
 int main(int argc, char **argv) {
   ros::init(argc, argv, "heron_nmea_command_publisher");
 
@@ -180,5 +202,6 @@ int main(int argc, char **argv) {
   DrivePublisher dp(&nh);
   HelmPublisher hp(&nh);
   CoursePublisher cp(&nh);
+  LightsPublisher lp(&nh);
   ros::spin();
 }

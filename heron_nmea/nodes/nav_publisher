@@ -24,7 +24,7 @@ def nmea_EW(decimal_degrees):
 
 
 class Nav(TxHelper):
-  SENTENCE = "NVG" 
+  SENTENCE = "NVG"
 
   def __init__(self):
     rospy.loginfo("Waiting for ENU to_fix service.")
@@ -50,7 +50,7 @@ class Nav(TxHelper):
 
     fix = self.to_fix(self.enu_datum, msg.pose.pose.position).llh
     roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
-    
+
     # Override heading with value from GPS, when we have sufficient speed.
     if self.vel and hypot(self.vel.twist.linear.y, self.vel.twist.linear.x) > 0.2:
       heading = (pi/2.0) - atan2(self.vel.twist.linear.y, self.vel.twist.linear.x)
@@ -69,7 +69,7 @@ class Nav(TxHelper):
 
 
 class VelRate(TxHelper):
-  SENTENCE = "NVR" 
+  SENTENCE = "NVR"
 
   def __init__(self, tf_listener):
     self.sub_imu = rospy.Subscriber("imu/data", Imu, self._cb)
@@ -82,7 +82,7 @@ class VelRate(TxHelper):
 
   def _cb(self, msg):
     if self.vel:
-      base_av = self.tf_listener.transformVector3("/base_link", 
+      base_av = self.tf_listener.transformVector3("/base_link",
               Vector3Stamped(msg.header, msg.angular_velocity))
       self.tx(self.gps_time(),
           self.vel.twist.linear.x,

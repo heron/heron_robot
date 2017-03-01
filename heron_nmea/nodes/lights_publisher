@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+import rospy
+
+from heron_nmea.nmea_helpers import TxHelper
+from std_msgs.msg import Bool
+
+
+class Lights(TxHelper):
+  SENTENCE = "ALT"
+
+  def __init__(self):
+    rospy.Subscriber("lights", Bool, self._cb)
+
+  def _cb(self, msg):
+    if msg.data == True:
+        self.tx(self.gps_time(),
+            1)
+    elif msg.data == False:
+        self.tx(self.gps_time(),
+            0)
+
+if __name__ == "__main__":
+  rospy.init_node('nmea_lights')
+  Lights()
+  rospy.spin()

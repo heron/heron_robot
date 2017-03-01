@@ -3,6 +3,8 @@
   <arg name="imu_rate" default="5.0" />
   <arg name="battery_enabled" default="true" />
   <arg name="battery_rate" default="0.5" />
+  <arg name="lights_enabled" default="true" />
+  <arg name="lights_rate" default="0.5" />
   <arg name="nav_enabled" default="true" />
   <arg name="nav_rate" default="5.0" />
 
@@ -45,11 +47,18 @@
           if="$(arg battery_enabled)" />
     <node pkg="heron_nmea" type="battery_publisher" name="nmea_battery" />
 
+    <!-- Publishes $CPALT messages -->
+    <node pkg="topic_tools" type="throttle" name="lights_throttle"
+          args="messages /lights $(arg lights_rate) lights"
+          if="$(arg lights_enabled)" />
+    <node pkg="heron_nmea" type="lights_publisher" name="nmea_lights" />
+
     <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
     <node pkg="heron_nmea" type="command_publisher" name="nmea_commands">
       <remap from="cmd_drive" to="/cmd_drive" />
       <remap from="cmd_helm" to="/cmd_helm" />
       <remap from="cmd_course" to="/cmd_course" />
+      <remap from="disable_lights" to="/disable_lights" />
     </node>
 
     <!-- NMEA HERON interface -->
