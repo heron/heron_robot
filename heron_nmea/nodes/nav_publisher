@@ -35,7 +35,7 @@ class Nav(TxHelper):
     self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
     self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
     self.sub_enu_datum = rospy.Subscriber("navsat/enu_datum", NavSatFix, self._enu_datum)
-    self.sub_heading = rospy.Subscriber("/imu/raw_compass_heading", Float32, self._heading)
+    self.sub_heading = rospy.Subscriber("/imu/compass_heading", Float32, self._heading)
     self.vel = None
     self.enu_datum = None
     self.heading = None
@@ -59,7 +59,7 @@ class Nav(TxHelper):
     if not self.heading:
       heading = 0.0
     else:
-      heading = (pi/2.0) - self.heading.data
+      heading = -self.heading.data + (pi/2.0)
     roll = 0.0
     pitch = 0.0
 
