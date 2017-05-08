@@ -10,13 +10,27 @@
   <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 
-  <node pkg="um6" type="um6_driver" name="um6_driver">
-    <param name="port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)"/>
-    <param name="lt_model" value="true" />
-    <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
-         separately, using the imu_compass node below. -->
-    <param name="mag_updates" value="false" />
-  </node>
+  <group unless="$(optenv HERON_IMU_UM7 0)" >
+    <node pkg="um6" type="um6_driver" name="um6_driver">
+      <param name="port" value="$(optenv HERON_IMU_PORT /dev/clearpath/imu)"/>
+      <param name="frame_id" value="$(optenv HERON_IMU_FRAME imu_link)"/>
+      <param name="lt_model" value="true" />
+      <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
+           separately, using the imu_compass node below. -->
+      <param name="mag_updates" value="false" />
+    </node>
+  </group>
+
+  <group if="$(optenv HERON_IMU_UM7 0)" >
+    <node pkg="um7" type="um7_driver" name="um7_driver">
+      <param name="port" type="string" value="$(optenv HERON_IMU_PORT /dev/clearpath/um7)"/>
+      <param name="frame_id" value="$(optenv HERON_IMU_FRAME imu_link)"/>
+      <param name="mag_updates" type="bool" value="false"/>
+      <param name="tf_ned_to_enu" value="true"/>
+      <remap from="imu" to="imu_um7"/>
+    </node>
+  </group>
+
 
   <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
     <rosparam file="$(env HERON_MAG_CONFIG)" />
