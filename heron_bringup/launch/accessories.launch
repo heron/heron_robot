@@ -22,7 +22,16 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
     </node>
 
     <!-- NMEA Interpretation -->
-    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver" />
+    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver" >
+      <remap from="nmea_sentence" to="rx" />
+    </node>
+
+    <!-- ENU translation -->
+    <node pkg="enu" type="from_fix" name="enu_from_fix">
+      <param name="invalid_covariance_value" value="1000000"/>
+      <param name="lock_altitude" value="0"/>
+      <param name="scale_covariance" value="0.05"/>
+    </node>
 
     <!-- Optional RTK relay -->
     <group if="$(optenv HERON_NAVSAT_SMART6_RTK 0)">

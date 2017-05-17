@@ -27,7 +27,16 @@
       <param name="frame_id" value="$(optenv HERON_IMU_FRAME imu_link)"/>
       <param name="mag_updates" type="bool" value="false"/>
       <param name="tf_ned_to_enu" value="true"/>
-      <remap from="imu" to="imu_um7"/>
+      <remap from="imu/data" to="imu/data_raw"/>
+    </node>
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter">
+      <rosparam file="$(env HERON_MAG_CONFIG)" />
+      <rosparam>
+        gain: 0.1
+        zeta: 0.001
+        publish_tf: false
+      </rosparam>
     </node>
   </group>
 
@@ -71,7 +80,7 @@
 
   <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
     <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>
-    <remap from="gps" to="navsat/enu"/>
+    <remap from="gps" to="$(optenv HERON_EKF_NAVSAT_TOPIC navsat/enu)"/>
     <remap from="imu_data" to="imu/data_compass"/>
   </node>
 
@@ -79,6 +88,8 @@
   <node pkg="tf" type="static_transform_publisher" name="navsat_to_gps_tf" args="0 0 0 0 0 0  navsat_link gps  20"/>
   <node pkg="tf" type="static_transform_publisher"
         name="base_to_basefootprint_tf" args="0 0 0 0 0 0  base_link base_footprint  20"/>
+  <node pkg="tf" type="static_transform_publisher"
+        name="imu_to_imu_lonk_tf" args="0 0 0 0 0 0 $(optenv HERON_IMU_FRAME imu_link) imu  20"/>
 
   <node pkg="heron_controller" type="controller" name="controller">
     <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
