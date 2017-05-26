@@ -81,7 +81,7 @@
   <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
     <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>
     <remap from="gps" to="$(optenv HERON_EKF_NAVSAT_TOPIC navsat/enu)"/>
-    <remap from="imu_data" to="imu/data_compass"/>
+    <remap from="imu_data" to="imu/data"/>
   </node>
 
   <!-- Temporarily since robot_pose_ekf_gpsfix is hardcoded with the gps and base_footprint frames. -->
