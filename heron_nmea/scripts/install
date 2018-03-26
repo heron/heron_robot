@@ -1,2 +1,1 @@
-cp ../launch/mjpeg.launch /etc/ros/hydro/heron-core.d
-cp ../launch/nmea_if.launch /etc/ros/hydro/heron-core.d
+cp ../launch/nmea_if.launch /etc/ros/kinetic/ros.d

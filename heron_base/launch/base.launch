@@ -4,7 +4,6 @@
   <arg name="port" default="/dev/arduino" />
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
     <param name="port" value="$(arg port)" />
-    <remap from="has_wifi" to="/wireless/connected" />
   </node>
 
   <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
@@ -50,8 +49,6 @@
       <param name="scale_covariance" value="0.05"/>
     </node>
   </group>
-
-  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
 
   <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
     <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>

@@ -30,7 +30,6 @@
   <run_depend>imu_compass</run_depend>
   <run_depend>declination</run_depend>
   <run_depend>robot_pose_ekf_gpsfix</run_depend>
-  <run_depend>wireless_watcher</run_depend>
 
   <export>
   </export>
