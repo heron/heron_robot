@@ -6,23 +6,29 @@
     <param name="port" value="$(arg port)" />
   </node>
 
+  <!-- These static transforms need to be updated -->
+  <node pkg="tf" type="static_transform_publisher" name="base_to_gps"
+    args="0.2921 0 0 0 0 0 1 base_link navsat 100" />
+
+  <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
+      args="0.1397 0 0 0 0 0 1 imu_link base_link 100" />
+
   <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 
-  <node pkg="um6" type="um6_driver" name="um6_driver">
-    <param name="port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)"/>
+  <include file="$(find heron_base)/launch/cal.launch" />
+  <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
+	<param name="tf_ned_to_enu" value="true"/>
+	<remap from="/imu/data" to="/imu/data_raw"/>
+	<param name="/um6_driver/port" value="/dev/clearpath/imu" />
+	<rosparam param="/soft_iron_bias">[0.00431, 0.0, 0.0, 0.0, 0.00431, 0.0, 0.0, 0.0, 0.00431]</rosparam>
+	<remap from="/imu/data" to="/imu/data_raw" />
+   </node>
 
-    <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
-         separately, using the imu_compass node below. -->
-    <param name="mag_updates" value="false" />
-  </node>
-
-  <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
-    <rosparam file="$(env HERON_MAG_CONFIG)" />
-  </node>
-
-  <node pkg="declination" type="compute" name="declination_compute" ns="imu">
-    <remap from="fix" to="/navsat/fix" />
+  <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
+    <param name="~use_magnetic_field_msg" value="false" />
+    <param name="world_frame" value="enu" />
+    <param name="publish_debug_topics" value="true" />
   </node>
 
   <!-- GPS serial comms -->
@@ -41,29 +47,12 @@
 
     <!-- interpretation -->
     <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
-
-    <!-- ENU translation -->
-    <node pkg="enu" type="from_fix" name="enu_from_fix">
-      <param name="invalid_covariance_value" value="1000000"/>
-      <param name="lock_altitude" value="0"/>
-      <param name="scale_covariance" value="0.05"/>
-    </node>
   </group>
 
-  <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
-    <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>
-    <remap from="gps" to="navsat/enu"/>
-    <remap from="imu_data" to="imu/data_compass"/>
-  </node>
-
-  <!-- Temporarily since robot_pose_ekf_gpsfix is hardcoded with the gps and base_footprint frames. -->
-  <node pkg="tf" type="static_transform_publisher" name="navsat_to_gps_tf" args="0 0 0 0 0 0  navsat_link gps  20"/>
-  <node pkg="tf" type="static_transform_publisher"
-        name="base_to_basefootprint_tf" args="0 0 0 0 0 0  base_link base_footprint  20"/>
+  <include file="$(find heron_control)/launch/control.launch" />
 
   <node pkg="heron_controller" type="controller" name="controller">
     <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-    <remap from="imu/data" to="imu/data_compass" />
   </node>
 
 </launch>

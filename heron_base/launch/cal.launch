@@ -1,0 +1,5 @@
+<launch>
+<rosparam param="/mag_bias/x">11.063203</rosparam>
+<rosparam param="/mag_bias/y">-119.162095</rosparam>
+<rosparam param="/mag_bias/z">-308.492537</rosparam>
+</launch>
