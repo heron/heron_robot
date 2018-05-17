@@ -1,5 +1,5 @@
 <launch>
- <!-- <include file="$(find heron_description)/launch/description.launch" />-->
+ <include file="$(find heron_description)/launch/description.launch" />
 
   <arg name="port" default="/dev/arduino" />
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
@@ -7,7 +7,7 @@
   </node>
 
   <!-- These static transforms need to be updated -->
-  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+  <node pkg="tf" type="static_transform_publisher" name="base_to_gps"
     args="0.2921 0 0 0 0 0 1 base_link navsat 100" />
 
   <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
