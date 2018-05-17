@@ -79,4 +79,4 @@ if [[ -r $CAL_FILE ]]; then
   fi
 fi
 
-bash calibration_write.sh < $CAL_FILE > /home/administrator/catkin_ws/src/heron_robot/heron_base/launch/cal.launch
+bash calibration_write.sh < $CAL_FILE > ${CAL_FINAL_PATH}/launch/cal.launch
