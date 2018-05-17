@@ -1,5 +1,5 @@
 <launch>
- <include file="$(find heron_description)/launch/description.launch" />
+  <include file="$(find heron_description)/launch/description.launch" />
 
   <arg name="port" default="/dev/arduino" />
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
@@ -18,24 +18,17 @@
 
   <include file="$(find heron_base)/launch/cal.launch" />
   <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
-   	<param name="tf_ned_to_enu" value="true"/>
-   	<remap from="/imu/data" to="/imu/data_raw"/>
-   	<param name="/um6_driver/port" value="/dev/clearpath/imu" />
-   	<param name="~lt_model" value="false" />
-   	<rosparam param="/soft_iron_bias">[0.00431, 0.0, 0.0, 0.0, 0.00431, 0.0, 0.0, 0.0, 0.00431]</rosparam>
-   	<remap from="/imu/data" to="/imu/data_raw" />
+	<param name="tf_ned_to_enu" value="true"/>
+	<remap from="/imu/data" to="/imu/data_raw"/>
+	<param name="/um6_driver/port" value="/dev/clearpath/imu" />
+	<rosparam param="/soft_iron_bias">[0.00431, 0.0, 0.0, 0.0, 0.00431, 0.0, 0.0, 0.0, 0.00431]</rosparam>
+	<remap from="/imu/data" to="/imu/data_raw" />
    </node>
 
   <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
-    <!--<remap from="/imu/data" to="/imu_data_proc" />
-    <remap from="/imu/data_raw" to="/imu/data" />-->
     <param name="~use_magnetic_field_msg" value="false" />
     <param name="world_frame" value="enu" />
     <param name="publish_debug_topics" value="true" />
-  </node>
-
-  <node pkg="declination" type="compute" name="declination_compute" ns="imu">
-    <remap from="fix" to="/navsat/fix" />
   </node>
 
   <!-- GPS serial comms -->
@@ -56,21 +49,10 @@
     <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
   </group>
 
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_node">
-    <rosparam command="load" file="/home/administrator/catkin_ws/src/heron_robot/heron_base/config/ekf_localization_gps.yaml" />
-    <remap from="odometry/filtered" to="odometry/filtered_map" />
-  </node>
-
-  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true" output="screen">
-    <rosparam command="load" file="/home/administrator/catkin_ws/src/heron_robot/heron_base/config/navsat_config.yaml" />
-
-    <remap from="/gps/fix" to="/navsat/fix" />
-    <remap from="/odometry/filtered" to="/odometry/filtered_map" />
-  </node>
+  <include file="$(find heron_control)/launch/control.launch" />
 
   <node pkg="heron_controller" type="controller" name="controller">
     <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-    <remap from="imu/data" to="imu/data" />
   </node>
 
 </launch>
