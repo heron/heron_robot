@@ -4,6 +4,12 @@ project(heron_base)
 find_package(catkin REQUIRED)
 
 catkin_package()
+
+catkin_install_python(PROGRAMS
+   scripts/snmp_lights.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 catkin_add_env_hooks(50.heron_find_controller_config
   SHELLS sh DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env-hooks)
 
@@ -12,6 +18,10 @@ catkin_add_env_hooks(50.heron_find_mag_config
 
 install(DIRECTORY config launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(PROGRAMS scripts/install
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 if (CATKIN_ENABLE_TESTING)
   find_package(roslaunch REQUIRED)
