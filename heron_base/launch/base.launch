@@ -51,22 +51,5 @@
     </node>
   </group>
 
-  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
-
-  <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
-    <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>
-    <remap from="gps" to="navsat/enu"/>
-    <remap from="imu_data" to="imu/data_compass"/>
-  </node>
-
-  <!-- Temporarily since robot_pose_ekf_gpsfix is hardcoded with the gps and base_footprint frames. -->
-  <node pkg="tf" type="static_transform_publisher" name="navsat_to_gps_tf" args="0 0 0 0 0 0  navsat_link gps  20"/>
-  <node pkg="tf" type="static_transform_publisher"
-        name="base_to_basefootprint_tf" args="0 0 0 0 0 0  base_link base_footprint  20"/>
-
-  <node pkg="heron_controller" type="controller" name="controller">
-    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-    <remap from="imu/data" to="imu/data_compass" />
-  </node>
-
-</launch>
+  <!-- Differential controller and basic localization -->
+  <include file="$(find heron_control)/launch/control.launch" />
