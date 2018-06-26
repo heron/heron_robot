@@ -8,7 +8,7 @@ CAL_FILE=${TEMPDIR}/imu_compass.yaml
 CAL_FINAL_PATH=${ROS_ETC_DIR%/*}/heron_base
 HERON_BASE_PATH=$(rospack find heron_base)
 HERON_BRINGUP_PATH=$(rospack find heron_bringup)
-DURATION=10
+DURATION=60
 
 ROSTOPIC_OUTPUT=$(rostopic list)
 if [[ "$?" != "0" ]]; then
