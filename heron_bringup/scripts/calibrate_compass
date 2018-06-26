@@ -6,7 +6,9 @@ BAG_FILE=${TEMPDIR}/imu_record.bag
 BAG_FILE_TEMP=${TEMPDIR}/imu_record-tmp.bag
 CAL_FILE=${TEMPDIR}/imu_compass.yaml
 CAL_FINAL_PATH=${ROS_ETC_DIR%/*}/heron_base
-DURATION=60
+HERON_BASE_PATH=$(rospack find heron_base)
+HERON_BRINGUP_PATH=$(rospack find heron_bringup)
+DURATION=10
 
 ROSTOPIC_OUTPUT=$(rostopic list)
 if [[ "$?" != "0" ]]; then
@@ -29,11 +31,11 @@ if [[ "$?" != "0" ]]; then
   exit 1
 fi
 
-rosbag record /tf /imu/rpy /imu/data /imu/mag_raw -O $BAG_FILE --duration $DURATION &
+rosbag record /tf $ROBOT_NAMESPACE/imu/rpy $ROBOT_NAMESPACE/imu/data $ROBOT_NAMESPACE/imu/mag_raw -O $BAG_FILE --duration $DURATION &
 ROSBAG_PID=$!
 echo "Started rosbag record, duration $DURATION seconds, pid [${ROSBAG_PID}]"
 
-rostopic pub /cmd_drive heron_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
+rostopic pub $ROBOT_NAMESPACE/cmd_drive heron_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
 ROSTOPIC_PID=$!
 echo "Started motion commands, pid [${ROSTOPIC_PID}]"
 
@@ -57,11 +59,13 @@ echo "Waiting for rosbag to shut down."
 sleep 2
 
 mv $BAG_FILE $BAG_FILE_TEMP
-rosrun rosbag topic_renamer.py /imu/mag_raw $BAG_FILE_TEMP /imu/mag $BAG_FILE
+rosrun rosbag topic_renamer.py $ROBOT_NAMESPACE/imu/mag_raw $BAG_FILE_TEMP $ROBOT_NAMESPACE/imu/mag $BAG_FILE
 
 echo "Computing magnetic calibration."
 
+export ROS_NAMESPACE=/$ROBOT_NAMESPACE
 rosrun imu_compass compute_calibration $BAG_FILE $CAL_FILE &> /tmp/compute_output.log
+
 if [[ "$?" != "0" ]]; then
   echo "Unable to compute calibration from recorded bag."
   echo "Output in /tmp/compute_output.log"
@@ -75,7 +79,8 @@ if [[ -r $CAL_FILE ]]; then
   if [[ $response =~ ^(no|n)$ ]]; then
     echo "Skipping."
   else
-    bash /home/administrator/catkin_ws/src/heron_robot/heron_bringup/scripts/calibration_write.sh < $CAL_FILE > /home/administrator/catkin_ws/src/heron_robot/heron_base/launch/cal.launch
+    sudo mkdir -p ${CAL_FINAL_PATH}
+    sudo cp $CAL_FILE ${CAL_FINAL_PATH}
     echo "Restart ROS service to begin using saved calibration."
   fi
 fi
