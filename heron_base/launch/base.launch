@@ -1,10 +1,17 @@
 <launch>
-  <include file="$(find heron_description)/launch/description.launch" />
+ <include file="$(find heron_description)/launch/description.launch" />
 
   <arg name="port" default="/dev/arduino" />
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
     <param name="port" value="$(arg port)" />
   </node>
+
+  <!-- Fix these static transforms -->
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+    args="0.2921 0 0 0 0 0 1 base_link navsat 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
+      args="0.1397 0 0 0 0 0 1 imu_link base_link 100" />
 
   <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
@@ -56,8 +63,7 @@
   </group>
 
   <node pkg="heron_controller" type="controller" name="controller">
-    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-    <remap from="imu/data" to="imu/data_compass" />
+    <rosparam file="$(find heron_controller)/config/heron_controller.yaml" />
   </node>
 
   <!-- Differential controller and basic localization -->
