@@ -1,64 +1,78 @@
 <launch>
- <include file="$(find heron_description)/launch/description.launch" />
+  <arg name="namespace" value="$(optenv ROBOT_NAMESPACE /)" />
 
-  <arg name="port" default="/dev/arduino" />
-  <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
-    <param name="port" value="$(arg port)" />
-  </node>
+  <include file="$(find heron_description)/launch/description.launch">
+    <arg name="namespace" value="$(arg namespace)" />
+  </include>
 
-  <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
-  <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+  <group ns="$(arg namespace)">
 
-  <group if="$(optenv USE_SNMP_CHECK_NODE true)">
-    <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
-	<param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
+    <arg name="port" default="/dev/arduino" />
+    <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
+      <param name="port" value="$(arg port)" />
     </node>
+
+    <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
+    <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+
+    <group if="$(optenv USE_SNMP_CHECK_NODE true)">
+      <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
+  	<param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
+      </node>
+    </group>
+
+    <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
+       <param name="tf_ned_to_enu" value="true"/>
+       <remap from="imu/mag" to="imu/mag_raw" />
+       <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
+       <remap from="imu/data" to="imu/data_raw" />
+       <param name="lt_model" value="true" />
+       <param name="linear_acceleration_stdev" value="0.38" />
+     </node>
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
+      <param name="~use_magnetic_field_msg" value="false" />
+      <param name="world_frame" value="enu" />
+      <param name="publish_tf" value="false" />
+      <param name="publish_debug_topics" value="true" />
+    </node>
+
+    <node pkg="imu_compass" type="imu_compass" name="imu_compass">
+  	<rosparam file="$(env HERON_MAG_CONFIG)" />
+  	<remap from="imu/data" to="imu/data_raw" />
+  	<remap from="imu/mag" to="imu/mag_raw" />
+  	<remap from="imu/mag_calib" to="imu/mag" />
+    </node>
+
+    <!-- GPS serial comms -->
+    <group ns="navsat">
+      <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
+        <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
+        <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
+        <param name="frame_id" value="navsat_link" />
+      </node>
+
+      <!-- GPS NMEA socket -->
+      <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
+            if="$(optenv HERON_NAVSAT_UBLOX_SOCKET 0)">
+        <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_SOCKET_PORT 2525)"/>
+        <remap from="tx" to="rx"/>
+      </node>
+
+      <!-- interpretation -->
+      <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
+    </group>
+
+    <node pkg="heron_controller" type="controller" name="controller">
+      <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
+    </node>
+
   </group>
 
-  <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
-     <param name="tf_ned_to_enu" value="true"/>
-     <remap from="/imu/mag" to="/imu/mag_raw" />
-     <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
-     <remap from="/imu/data" to="/imu/data_raw" />
-     <param name="lt_model" value="true" />
-   </node>
+  <!-- Basic localization -->
+  <rosparam param="$(arg namespace)/ekf_localization_node/tf_prefix" subst_value="True">$(arg namespace)</rosparam>
+  <rosparam param="$(arg namespace)/navsat_transform_node/tf_prefix" subst_value="True">$(arg namespace)</rosparam>
+  <include file="$(find heron_control)/launch/control.launch" ns="$(arg namespace)" />
 
-  <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
-    <param name="~use_magnetic_field_msg" value="false" />
-    <param name="world_frame" value="enu" />
-    <param name="publish_tf" value="false" />
-    <param name="publish_debug_topics" value="true" />
-  </node>
 
-  <node pkg="imu_compass" type="imu_compass" name="imu_compass">
-	<rosparam file="$(env HERON_MAG_CONFIG)" />
-	<remap from="/imu/data" to="/imu/data_raw" />
-	<remap from="/imu/mag" to="/imu/mag_raw" />
-	<remap from="/imu/mag_calib" to="/imu/mag" />
-  </node>
-
-  <!-- GPS serial comms -->
-  <group ns="navsat">
-    <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
-      <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
-      <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
-    </node>
-
-    <!-- GPS NMEA socket -->
-    <node pkg="nmea_comms" type="socket_node" name="nmea_socket_node"
-          if="$(optenv HERON_NAVSAT_UBLOX_SOCKET 0)">
-      <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_SOCKET_PORT 2525)"/>
-      <remap from="tx" to="rx"/>
-    </node>
-
-    <!-- interpretation -->
-    <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
-  </group>
-
-  <node pkg="heron_controller" type="controller" name="controller">
-    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-  </node>
-
-  <!-- Differential controller and basic localization -->
-  <include file="$(find heron_control)/launch/control.launch" />
 </launch>
