@@ -22,6 +22,10 @@
       </node>
     </group>
 
+    <group unless="$(optenv USE_SNMP_CHECK_NODE true)">
+        <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
+    </group>
+
     <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
        <remap from="imu/mag" to="imu/mag_raw" />
