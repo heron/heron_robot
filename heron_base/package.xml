@@ -31,6 +31,8 @@
 
   <run_depend>python-pysnmp4</run_depend>
 
+  <run_depend>python-pysnmp4</run_depend>
+
   <export>
   </export>
 </package>
