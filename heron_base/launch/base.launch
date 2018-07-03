@@ -10,6 +10,7 @@
     <arg name="port" default="/dev/arduino" />
     <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
       <param name="port" value="$(arg port)" />
+      <remap from="has_wifi" to="wireless/connected" />
     </node>
 
     <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
@@ -18,7 +19,6 @@
     <group if="$(optenv USE_SNMP_CHECK_NODE true)">
       <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
   	     <param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
-         <remap from="has_wifi" to="wireless/connected" />
       </node>
     </group>
 
