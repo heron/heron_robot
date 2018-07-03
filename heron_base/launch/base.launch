@@ -34,7 +34,6 @@
   <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
       args="0.1397 0 0 0 0 0 1 imu_link base_link 100" />
 
-  <include file="$(find heron_base)/launch/cal.launch" />
   <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
      <param name="tf_ned_to_enu" value="true"/>
      <remap from="/imu/data" to="/imu/data_raw"/>
