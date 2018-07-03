@@ -28,6 +28,7 @@
   <run_depend>um6</run_depend>
   <run_depend>imu_compass</run_depend>
   <run_depend>heron_control</run_depend>
+  <run_depend>wireless_watcher</run_depend>
 
   <run_depend>python-pysnmp4</run_depend>
 
