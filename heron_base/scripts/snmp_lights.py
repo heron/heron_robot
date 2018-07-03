@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Software License Agreement (BSD)
 #
-# @author    Nirzvi1 <guys@qualum.com>
+# @author    Guy Stoppi <gstoppi@clearpathrobotics.com>
 # @copyright (c) 2018, Clearpath Robotics, Inc., All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -82,7 +82,7 @@ def lights():
 	ping_task = threading.Thread(target=ping_loop)
 	ping_task.start()
 
-	pub = rospy.Publisher("has_wifi", Bool, queue_size=1)
+	pub = rospy.Publisher("wireless/connected", Bool, queue_size=1)
 	rate = rospy.Rate(2)
 
     # loop to constantly publish SNMP status on /has_wifi topic
