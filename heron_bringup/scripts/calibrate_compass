@@ -1,13 +1,10 @@
 #!/bin/bash
 
 TEMPDIR=$(mktemp -d --tmpdir calibrate_compass.XXXX)
-UNNAMED_BAG=${TEMPDIR}/imu_record_unnamed.bag
 BAG_FILE=${TEMPDIR}/imu_record.bag
 BAG_FILE_TEMP=${TEMPDIR}/imu_record-tmp.bag
 CAL_FILE=${TEMPDIR}/imu_compass.yaml
 CAL_FINAL_PATH=${ROS_ETC_DIR%/*}/heron_base
-HERON_BASE_PATH=$(rospack find heron_base)
-HERON_BRINGUP_PATH=$(rospack find heron_bringup)
 DURATION=60
 
 ROSTOPIC_OUTPUT=$(rostopic list)
