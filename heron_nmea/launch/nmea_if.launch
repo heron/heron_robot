@@ -7,64 +7,67 @@
   <arg name="lights_rate" default="0.5" />
   <arg name="nav_enabled" default="true" />
   <arg name="nav_rate" default="5.0" />
+  <arg name="namespace" value="$(eval '/' + optenv('ROBOT_NAMESPACE'))" />
+  <arg name="namespace_group" value="$(optenv ROBOT_NAMESPACE /)" />
 
-  <group ns="nmea_if">
+  <group ns="$(arg namespace_group)">
+    <group ns="nmea_if">
 
-    <node pkg="topic_tools" type="relay" name="navsat_sentence_relay"
-          args="/navsat/nmea_sentence /navsat/rx" />
+      <node pkg="topic_tools" type="relay" name="navsat_sentence_relay"
+            args="$(arg namespace)/navsat/nmea_sentence navsat/rx" />
 
-    <!-- GPS time offset calculator -->
-    <param name="time_offset_default" value="-14401.595" />
-    <node pkg="heron_nmea" type="gps_time_offset_publisher" name="time_offset">
-      <remap from="rx" to="/navsat/rx" />
-    </node>
+      <!-- GPS time offset calculator -->
+      <param name="time_offset_default" value="-14401.595" />
+      <node pkg="heron_nmea" type="gps_time_offset_publisher" name="time_offset">
+        <remap from="rx" to="navsat/rx" />
+      </node>
 
-    <!-- Relay sentences from GPS receiver -->
-    <node pkg="topic_tools" type="relay" name="nmea_sentence_relay" args="/navsat/rx tx">
-    </node>
+      <!-- Relay sentences from GPS receiver -->
+      <node pkg="topic_tools" type="relay" name="nmea_sentence_relay" args="navsat/rx tx">
+      </node>
 
-    <!-- Relay GPS vel messages (for NVG and NVR messages) -->
-    <node pkg="topic_tools" type="relay" name="nmea_vel_relay" args="/navsat/vel navsat/vel">
-    </node>
+      <!-- Relay GPS vel messages (for NVG and NVR messages) -->
+      <node pkg="topic_tools" type="relay" name="nmea_vel_relay" args="$(arg namespace)/navsat/vel navsat/vel">
+      </node>
 
-    <!-- Publishes $CPNVG and $CPNVR messages -->
-    <node pkg="topic_tools" type="throttle" name="odom_throttle"
-          args="messages /robot_pose_ekf/odom $(arg nav_rate) odom"
-          if="$(arg nav_enabled)" />
-    <remap from="navsat/enu_datum" to="/navsat/enu_datum" />
-    <node pkg="enu" type="services" name="enu_services" />
-    <node pkg="heron_nmea" type="nav_publisher" name="nmea_nav" />
+      <!-- Publishes $CPNVG and $CPNVR messages -->
+      <node pkg="topic_tools" type="throttle" name="odom_throttle"
+            args="messages $(arg namespace)/odometry/filtered $(arg nav_rate) odom"
+            if="$(arg nav_enabled)" />
+      <node pkg="topic_tools" type="relay" name="nmea_fix_relay" args="$(arg namespace)/navsat/fix navsat/fix" />
+      <node pkg="heron_nmea" type="nav_publisher" name="nmea_nav" />
 
-    <!-- Publishes $CPIMU and $CPRCM messages -->
-    <node pkg="topic_tools" type="throttle" name="imu_throttle"
-          args="messages /imu/data_compass $(arg imu_rate) imu/data"
-          if="$(arg imu_enabled)" />
-    <node pkg="heron_nmea" type="imu_publisher" name="nmea_imu" />
+      <!-- Publishes $CPIMU and $CPRCM messages -->
+      <node pkg="topic_tools" type="throttle" name="imu_throttle"
+            args="messages $(arg namespace)/imu/data $(arg imu_rate) imu/data"
+            if="$(arg imu_enabled)" />
+      <node pkg="heron_nmea" type="imu_publisher" name="nmea_imu" />
 
-    <!-- Publishes $CPRBS messages -->
-    <node pkg="topic_tools" type="throttle" name="battery_throttle"
-          args="messages /sense $(arg battery_rate) sense"
-          if="$(arg battery_enabled)" />
-    <node pkg="heron_nmea" type="battery_publisher" name="nmea_battery" />
+      <!-- Publishes $CPRBS messages -->
+      <node pkg="topic_tools" type="throttle" name="battery_throttle"
+            args="messages $(arg namespace)/sense $(arg battery_rate) sense"
+            if="$(arg battery_enabled)" />
+      <node pkg="heron_nmea" type="battery_publisher" name="nmea_battery" />
 
-    <!-- Publishes $CPALT messages -->
-    <node pkg="topic_tools" type="throttle" name="lights_throttle"
-          args="messages /lights $(arg lights_rate) lights"
-          if="$(arg lights_enabled)" />
-    <node pkg="heron_nmea" type="lights_publisher" name="nmea_lights" />
+      <!-- Publishes $CPALT messages -->
+      <node pkg="topic_tools" type="throttle" name="lights_throttle"
+            args="messages $(arg namespace)/lights $(arg lights_rate) lights"
+            if="$(arg lights_enabled)" />
+      <node pkg="heron_nmea" type="lights_publisher" name="nmea_lights" />
 
-    <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
-    <node pkg="heron_nmea" type="command_publisher" name="nmea_commands">
-      <remap from="cmd_drive" to="/cmd_drive" />
-      <remap from="cmd_helm" to="/cmd_helm" />
-      <remap from="cmd_course" to="/cmd_course" />
-      <remap from="disable_lights" to="/disable_lights" />
-    </node>
+      <!-- Receives $PYDIR, $PYDEV, and $PYDEP messages -->
+      <node pkg="heron_nmea" type="command_publisher" name="nmea_commands">
+        <remap from="cmd_drive" to="$(arg namespace)/cmd_drive" />
+        <remap from="cmd_helm" to="$(arg namespace)/cmd_helm" />
+        <remap from="cmd_course" to="$(arg namespace)/cmd_course" />
+        <remap from="disable_lights" to="$(arg namespace)/disable_lights" />
+      </node>
 
-    <!-- NMEA HERON interface -->
-    <node pkg="nmea_comms" type="socket_node" name="socket_node">
-      <remap from="nmea_sentence_out" to="tx" />
-      <remap from="nmea_sentence" to="rx" />
-    </node>
+      <!-- NMEA HERON interface -->
+      <node pkg="nmea_comms" type="socket_node" name="socket_node">
+        <remap from="nmea_sentence_out" to="tx" />
+        <remap from="nmea_sentence" to="rx" />
+      </node>
+    </group>
   </group>
 </launch>
