@@ -32,6 +32,7 @@
        <remap from="imu/data" to="imu/data_raw" />
        <param name="lt_model" value="true" />
        <param name="linear_acceleration_stdev" value="0.38" />
+       <param name="frame_id" value="$(arg namespace)/imu_link" />
      </node>
 
     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
@@ -71,5 +72,5 @@
   <rosparam param="$(arg namespace)/ekf_localization_node/tf_prefix" subst_value="True">$(arg namespace)</rosparam>
   <rosparam param="$(arg namespace)/navsat_transform_node/tf_prefix" subst_value="True">$(arg namespace)</rosparam>
   <include file="$(find heron_control)/launch/control.launch" ns="$(arg namespace)" />
-  
+
 </launch>
