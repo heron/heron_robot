@@ -5,8 +5,8 @@ from tf import TransformListener
 from time import sleep
 
 from heron_nmea.nmea_helpers import TxHelper
-from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped, Vector3Stamped
-from enu.srv import ToFix
+from geometry_msgs.msg import TwistStamped, Vector3Stamped
+from nav_msgs.msg import Odometry
 from math import degrees, floor, fabs, atan2, hypot, pi
 from heron_nmea.rpy_helpers import sea_rpy_from_quaternion
 from sensor_msgs.msg import Imu, NavSatFix
@@ -28,27 +28,23 @@ class Nav(TxHelper):
 
   def __init__(self):
     rospy.loginfo("Waiting for ENU to_fix service.")
-    rospy.wait_for_service('to_fix')
     rospy.loginfo("Service found, setting up NVG publisher.")
-    self.to_fix = rospy.ServiceProxy('to_fix', ToFix)
-    self.sub_odom = rospy.Subscriber("odom", PoseWithCovarianceStamped, self._cb)
+    self.sub_fix = rospy.Subscriber("navsat/fix", NavSatFix, self._fix_cb)
+    self.sub_odom = rospy.Subscriber("odom", Odometry, self._cb)
     self.sub_vel = rospy.Subscriber("navsat/vel", TwistStamped, self._vel)
-    self.sub_enu_datum = rospy.Subscriber("navsat/enu_datum", NavSatFix, self._enu_datum)
     self.vel = None
-    self.enu_datum = None
+    self.fix = None
 
   def _vel(self, msg):
     self.vel = msg
 
-  def _enu_datum(self, msg):
-    self.enu_datum = msg
+  def _fix_cb(self, msg):
+    self.fix = msg
 
   def _cb(self, msg):
-    if not self.enu_datum:
-      rospy.logwarn("Can't publish nav without enu datum.")
-      return
+    if self.fix is None:
+        return
 
-    fix = self.to_fix(self.enu_datum, msg.pose.pose.position).llh
     roll, pitch, heading = sea_rpy_from_quaternion(msg.pose.pose.orientation)
 
     # Override heading with value from GPS, when we have sufficient speed.
@@ -57,8 +53,8 @@ class Nav(TxHelper):
       if heading < 0: heading += 2*pi
 
     self.tx(self.gps_time(),
-        nmea_deg(fix.latitude), nmea_NS(fix.latitude),
-        nmea_deg(fix.longitude), nmea_EW(fix.longitude),
+        nmea_deg(self.fix.latitude), nmea_NS(self.fix.latitude),
+        nmea_deg(self.fix.longitude), nmea_EW(self.fix.longitude),
         1, # Pos quality. 1 = GPS, for now we don't publish unless there are fixes.
         0, # Altitude from bottom
         0, # Depth from surface
