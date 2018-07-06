@@ -23,20 +23,15 @@
         <remap from="rx" to="navsat/rx" />
       </node>
 
-      <!-- Relay sentences from GPS receiver -->
-      <node pkg="topic_tools" type="relay" name="nmea_sentence_relay" args="navsat/rx tx">
-      </node>
-
-      <!-- Relay GPS vel messages (for NVG and NVR messages) -->
-      <node pkg="topic_tools" type="relay" name="nmea_vel_relay" args="$(arg namespace)/navsat/vel navsat/vel">
-      </node>
-
       <!-- Publishes $CPNVG and $CPNVR messages -->
       <node pkg="topic_tools" type="throttle" name="odom_throttle"
             args="messages /$(arg namespace)/odometry/filtered $(arg nav_rate) odom"
             if="$(arg nav_enabled)" />
-      <node pkg="topic_tools" type="relay" name="nmea_fix_relay" args="$(arg namespace)/navsat/fix navsat/fix" />
-      <node pkg="heron_nmea" type="nav_publisher" name="nmea_nav" />
+      <node pkg="heron_nmea" type="nav_publisher" name="nmea_nav">
+        <param name="namespace" value="$(arg namespace)" />
+        <remap from="nmea_if/navsat/vel" to="navsat/vel" />
+        <remap from="nmea_if/navsat/fix" to="navsat/fix" />
+      </node>
 
       <!-- Publishes $CPIMU and $CPRCM messages -->
       <node pkg="topic_tools" type="throttle" name="imu_throttle"
