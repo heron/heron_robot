@@ -93,10 +93,12 @@ class VelRate(TxHelper):
           -degrees(base_av.vector.z)) # Yaw rate
 
 
-namespace = "/"
+namespace = ""
 if __name__ == "__main__":
   rospy.init_node('nmea_nav')
-  namespace = rospy.get_param("namespace", "/")
+
+  namespace = rospy.get_param("~namespace", "") + "/"
+
   tf_listener = TransformListener()
   tf_listener.waitForTransform(namespace + "base_link", namespace + "imu_link", rospy.Time(), rospy.Duration(10.0))
   sleep(1.0)

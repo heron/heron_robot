@@ -57,11 +57,11 @@ class RawCompass(TxHelper):
         degrees(roll),
         self.gps_time(msg.header.stamp))
 
-namespace = "/"
+namespace = ""
 if __name__ == "__main__":
   rospy.init_node('nmea_imu')
 
-  namespace = rospy.get_param("namespace", "/")
+  namespace = rospy.get_param("~namespace", "") + "/"
 
   tf_listener = TransformListener()
   tf_listener.waitForTransform(namespace + "base_link", namespace + "imu_link", rospy.Time(), rospy.Duration(10.0))

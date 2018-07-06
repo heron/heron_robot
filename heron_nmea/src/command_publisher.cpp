@@ -203,5 +203,8 @@ int main(int argc, char **argv) {
   HelmPublisher hp(&nh);
   CoursePublisher cp(&nh);
   LightsPublisher lp(&nh);
+  std::string name_space;
+  nh.param<std::string>("namespace", name_space, "heron");
+  name_space = "/" + name_space;
   ros::spin();
 }
