@@ -28,7 +28,6 @@
 
     <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
-       <remap from="imu/mag" to="imu/mag_raw" />
        <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
        <remap from="imu/data" to="imu/data_raw" />
        <param name="lt_model" value="true" />
@@ -36,17 +35,11 @@
      </node>
 
     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
+  	  <rosparam file="$(env HERON_MAG_CONFIG)" />
       <param name="~use_magnetic_field_msg" value="false" />
       <param name="world_frame" value="enu" />
       <param name="publish_tf" value="false" />
       <param name="publish_debug_topics" value="true" />
-    </node>
-
-    <node pkg="imu_compass" type="imu_compass" name="imu_compass">
-  	<rosparam file="$(env HERON_MAG_CONFIG)" />
-  	<remap from="imu/data" to="imu/data_raw" />
-  	<remap from="imu/mag" to="imu/mag_raw" />
-  	<remap from="imu/mag_calib" to="imu/mag" />
     </node>
 
     <!-- GPS serial comms -->
