@@ -24,10 +24,12 @@ There are also a number of NMEA sentences published directly from the GPS sensor
   - Similarly for Y,Z linear acceleration
 - CPRCM:
   - Heading field is (180 - deg(h)) where h is the heading from the IMU
+    - Heading field is zero when facing south and increases counter-clockwise
   - Pitch is negative compared to the output from the IMU
   - All fields are in degrees
 - CPNVG:
   - Latitude and Longitude in Degrees and Decimal Minutes (DMM)
+    - Heading field is zero when facing north and increases clockwise
   - Heading, Pitch, Roll are in degrees
 - CPNVR:
   - The Y,Z angular velocity are negative compared to the direct output of the IMU
