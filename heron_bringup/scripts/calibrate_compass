@@ -56,8 +56,7 @@ sleep 2
 
 echo "Computing magnetic calibration."
 
-export ROS_NAMESPACE=/$ROBOT_NAMESPACE
-rosrun heron_bringup compute_calibration $BAG_FILE $CAL_FILE &> /tmp/compute_output.log
+rosrun heron_bringup compute_calibration $BAG_FILE $CAL_FILE $ROBOT_NAMESPACE &> /tmp/compute_output.log
 
 if [[ "$?" != "0" ]]; then
   echo "Unable to compute calibration from recorded bag."
