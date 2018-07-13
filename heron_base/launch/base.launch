@@ -1,29 +1,51 @@
 <launch>
-  <include file="$(find heron_description)/launch/description.launch" />
+ <include file="$(find heron_description)/launch/description.launch" />
 
   <arg name="port" default="/dev/arduino" />
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
     <param name="port" value="$(arg port)" />
-    <remap from="has_wifi" to="/wireless/connected" />
+    <remap from="has_wifi" to="wireless/connected" />
   </node>
+
+  <!-- Fix these static transforms -->
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+    args="0.2921 0 0 0 0 0 1 base_link navsat 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
+      args="0.1397 0 0 0 0 0 1 imu_link base_link 100" />
 
   <!-- TODO: Eliminate this by compiling the necessary message definitions into heron_base. -->
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 
-  <node pkg="um6" type="um6_driver" name="um6_driver">
-    <param name="port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)"/>
+  <group if="$(optenv USE_SNMP_CHECK_NODE true)">
+    <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
+	<param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
+    </node>
+  </group>
 
-    <!-- Deliver an intertial-only IMU message. We incorporate the magnetometer
-         separately, using the imu_compass node below. -->
-    <param name="mag_updates" value="false" />
-  </node>
+  <group unless="$(optenv USE_SNMP_CHECK_NODE false)">
+    <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
+  </group>
 
-  <node pkg="imu_compass" type="imu_compass" name="imu_compass" respawn="true">
-    <rosparam file="$(env HERON_MAG_CONFIG)" />
-  </node>
+  <!-- Possibly fix these static transforms -->
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+    args="0.2921 0 0 0 0 0 1 base_link navsat 100" />
 
-  <node pkg="declination" type="compute" name="declination_compute" ns="imu">
-    <remap from="fix" to="/navsat/fix" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_imu"
+      args="0.1397 0 0 0 0 0 1 imu_link base_link 100" />
+
+  <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
+     <param name="tf_ned_to_enu" value="true"/>
+     <remap from="/imu/data" to="/imu/data_raw"/>
+     <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
+     <rosparam param="/soft_iron_bias">[0.00431, 0.0, 0.0, 0.0, 0.00431, 0.0, 0.0, 0.0, 0.00431]</rosparam>
+     <remap from="/imu/data" to="/imu/data_raw" />
+   </node>
+
+  <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
+    <param name="~use_magnetic_field_msg" value="false" />
+    <param name="world_frame" value="enu" />
+    <param name="publish_debug_topics" value="true" />
   </node>
 
   <!-- GPS serial comms -->
@@ -42,31 +64,12 @@
 
     <!-- interpretation -->
     <node pkg="nmea_navsat_driver" type="nmea_topic_driver" name="nmea_topic_driver"/>
-
-    <!-- ENU translation -->
-    <node pkg="enu" type="from_fix" name="enu_from_fix">
-      <param name="invalid_covariance_value" value="1000000"/>
-      <param name="lock_altitude" value="0"/>
-      <param name="scale_covariance" value="0.05"/>
-    </node>
   </group>
 
-  <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
-
-  <node pkg="robot_pose_ekf_gpsfix" type="robot_pose_ekf" name="robot_pose_ekf">
-    <rosparam command="load" file="$(find heron_base)/config/ekf.yaml"/>
-    <remap from="gps" to="navsat/enu"/>
-    <remap from="imu_data" to="imu/data_compass"/>
-  </node>
-
-  <!-- Temporarily since robot_pose_ekf_gpsfix is hardcoded with the gps and base_footprint frames. -->
-  <node pkg="tf" type="static_transform_publisher" name="navsat_to_gps_tf" args="0 0 0 0 0 0  navsat_link gps  20"/>
-  <node pkg="tf" type="static_transform_publisher"
-        name="base_to_basefootprint_tf" args="0 0 0 0 0 0  base_link base_footprint  20"/>
-
   <node pkg="heron_controller" type="controller" name="controller">
-    <rosparam file="$(env HERON_CONTROLLER_CONFIG)" />
-    <remap from="imu/data" to="imu/data_compass" />
+    <rosparam file="$(find heron_controller)/config/heron_controller.yaml" />
   </node>
 
+  <!-- Differential controller and basic localization -->
+  <include file="$(find heron_control)/launch/control.launch" />
 </launch>
