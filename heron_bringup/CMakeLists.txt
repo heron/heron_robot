@@ -12,6 +12,7 @@ install(DIRECTORY launch config udev
 
 install(PROGRAMS
   scripts/calibrate_compass
+  scripts/compute_calibration
   scripts/install
   scripts/navsat_rtk_relay
   scripts/netserial
