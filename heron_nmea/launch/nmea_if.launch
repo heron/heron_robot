@@ -29,8 +29,8 @@
             if="$(arg nav_enabled)" />
       <node pkg="heron_nmea" type="nav_publisher" name="nmea_nav">
         <param name="namespace" value="$(arg namespace)" />
-        <remap from="nmea_if/navsat/vel" to="navsat/vel" />
-        <remap from="nmea_if/navsat/fix" to="navsat/fix" />
+        <remap from="/$(arg namespace)/nmea_if/navsat/vel" to="/$(arg namespace)/navsat/vel" />
+        <remap from="/$(arg namespace)/nmea_if/navsat/fix" to="/$(arg namespace)/navsat/fix" />
       </node>
 
       <!-- Publishes $CPIMU and $CPRCM messages -->

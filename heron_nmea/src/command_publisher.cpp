@@ -228,7 +228,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
 
   std::string name_space;
-  nh.param<std::string>("namespace", name_space, "heron");
+  nh.param<std::string>("namespace", name_space, "");
   name_space = "/" + name_space;
 
   ros::ServiceClient active_controls = nh.serviceClient<heron_controller::ActivateControl>(name_space + "/activate_control");

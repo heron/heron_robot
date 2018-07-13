@@ -46,7 +46,7 @@ class RawCompass(TxHelper):
     self.tf_listener = tf_listener
 
   def _cb(self, msg):
-    base_imu = self.tf_listener.transformQuaternion("/base_link",
+    base_imu = self.tf_listener.transformQuaternion(namespace + "base_link",
             QuaternionStamped(msg.header, msg.orientation))
     roll, pitch, heading = sea_rpy_from_quaternion(base_imu.quaternion)
 
