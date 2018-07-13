@@ -19,17 +19,18 @@ The *heron_nmea* package allows users to control and receive data from the Heron
 There are also a number of NMEA sentences published directly from the GPS sensor. The sentence type is prefixed by "GP" and can be decoded using this guide: http://www.gpsinformation.org/dale/nmea.htm
 
 #### Details of Output Data
+- GPS Time:
+  - Timestamp originating from GPS Data
 - CPIMU:
   - Y Angular Velocity and Z Angular Velocity are negative compared to the direct output from the IMU (in degrees)
   - Similarly for Y,Z linear acceleration
 - CPRCM:
-  - Heading field is (180 - deg(h)) where h is the heading from the IMU
-    - Heading field is zero when facing south and increases counter-clockwise
-  - Pitch is negative compared to the output from the IMU
+  - Heading field is zero when facing south and increases counter-clockwise
   - All fields are in degrees
 - CPNVG:
   - Latitude and Longitude in Degrees and Decimal Minutes (DMM)
-    - Heading field is zero when facing north and increases clockwise
+  - Heading field is zero when facing north and increases clockwise
+  - Pitch is negative relative to the output from the IMU
   - Heading, Pitch, Roll are in degrees
 - CPNVR:
   - The Y,Z angular velocity are negative compared to the direct output of the IMU
