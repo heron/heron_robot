@@ -42,7 +42,6 @@
 #include "heron_msgs/Helm.h"
 #include "nmea_msgs/Sentence.h"
 #include "heron_controller/ActivateControl.h"
-#include "std_msgs/Bool.h"
 #include "ros/ros.h"
 
 // Boost provides functions for these, but they're a pain in the butt.
@@ -219,9 +218,10 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "heron_nmea_command_publisher");
 
   ros::NodeHandle nh;
+  ros::NodeHandle prv_nh("~");
 
   std::string name_space;
-  nh.param<std::string>("namespace", name_space, "");
+  prv_nh.param<std::string>("namespace", name_space, "");
   name_space = "/" + name_space;
 
   ros::ServiceClient active_controls = nh.serviceClient<heron_controller::ActivateControl>(name_space + "/activate_control");
