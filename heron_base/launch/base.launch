@@ -25,7 +25,7 @@
     <group unless="$(optenv USE_SNMP_CHECK_NODE true)">
         <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
     </group>
- 
+
     <group if="$(eval arg('namespace') == '')">
      <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
@@ -36,7 +36,7 @@
        <param name="frame_id" value="imu_link" />
      </node>
     </group>
-   
+
     <group unless="$(eval arg('namespace') == '')">
      <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
@@ -58,21 +58,21 @@
 
     <!-- GPS serial comms -->
     <group ns="navsat">
-	
+
       <group if="$(eval arg('namespace') == '')">
-      <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
-        <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
-        <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
-        <param name="frame_id" value="navsat_link" />
-      </node>
+        <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
+          <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
+          <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
+          <param name="frame_id" value="navsat_link" />
+        </node>
       </group>
 
       <group unless="$(eval arg('namespace') == '')">
-      <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
-        <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
-        <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
-        <param name="frame_id" value="$(arg namespace)/navsat_link" />
-      </node>
+        <node pkg="nmea_comms" type="serial_node" name="nmea_serial_node">
+          <param name="port" value="$(optenv HERON_NAVSAT_UBLOX_PORT /dev/ublox)"/>
+          <param name="baud" value="$(optenv HERON_NAVSAT_UBLOX_BAUD 115200)"/>
+          <param name="frame_id" value="$(arg namespace)/navsat_link" />
+        </node>
       </group>
 
 
