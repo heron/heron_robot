@@ -49,7 +49,6 @@
 static const double TO_RADIANS = 3.14159265359 / 180.0;
 static const double TO_DEGREES = 180.0 / 3.14159265359;
 
-
 class Helper
 {
 public:
@@ -159,9 +158,6 @@ public:
 private:
   void cb(const ros::V_string& fields)
   {
-    if (!controls_.call(srv_)) {
-      ROS_ERROR("Failed to enable heron_controller algorithms");
-    }//if
 
     heron_msgs::Helm helm_msg;
     helm_msg.yaw_rate = boost::lexical_cast<double>(fields[0]) * TO_RADIANS * -1;
@@ -186,9 +182,6 @@ public:
 private:
   void cb(const ros::V_string& fields)
   {
-    if (!controls_.call(srv_)) {
-      ROS_ERROR("Failed to enable heron_controller algorithms");
-    }//if
 
     heron_msgs::Course course_msg;
 
