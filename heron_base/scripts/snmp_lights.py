@@ -44,7 +44,7 @@ def ping():
       ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysObjectID', 0)))
     )
 
-    # if error in connection, log the error and send "false" to /has_wifi topic
+    # if error in connection, log the error and send "false" to wireless/connected topic
     if errorIndication or errorStatus:
     	status = False
     	rospy.logerr("Ping to base station failed")
@@ -76,7 +76,7 @@ def lights():
 	if rospy.has_param("~ip_addr"):
 		ip_addr = rospy.get_param("~ip_addr")
 
-    # the lights controller expect a "True" signal on the /has_wifi topic at least 2Hz
+    # the lights controller expect a "True" signal on the wireless/connected topic at least 2Hz
     # the ping time is slower than this, so the SNMP pinging is placed on a separate thread
     # and it updates a global variable
 	ping_task = threading.Thread(target=ping_loop)

@@ -27,11 +27,11 @@ if [[ "$?" != "0" ]]; then
   exit 1
 fi
 
-rosbag record /tf /imu/rpy /imu/data /imu/mag -O $BAG_FILE --duration $DURATION &
+rosbag record /tf $ROBOT_NAMESPACE/imu/rpy $ROBOT_NAMESPACE/imu/data $ROBOT_NAMESPACE/imu/mag -O $BAG_FILE --duration $DURATION &
 ROSBAG_PID=$!
 echo "Started rosbag record, duration $DURATION seconds, pid [${ROSBAG_PID}]"
 
-rostopic pub /cmd_drive heron_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
+rostopic pub $ROBOT_NAMESPACE/cmd_drive heron_msgs/Drive '{ left: 0.5, right: -0.8 }' -r 15 & > /dev/null
 ROSTOPIC_PID=$!
 echo "Started motion commands, pid [${ROSTOPIC_PID}]"
 
@@ -55,7 +55,9 @@ echo "Waiting for rosbag to shut down."
 sleep 2
 
 echo "Computing magnetic calibration."
-rosrun imu_compass compute_calibration $BAG_FILE $CAL_FILE &> /tmp/compute_output.log
+
+rosrun heron_bringup compute_calibration $BAG_FILE $CAL_FILE $ROBOT_NAMESPACE &> /tmp/compute_output.log
+
 if [[ "$?" != "0" ]]; then
   echo "Unable to compute calibration from recorded bag."
   echo "Output in /tmp/compute_output.log"
@@ -64,7 +66,7 @@ fi
 
 if [[ -r $CAL_FILE ]]; then
   echo "Calibration generated in $CAL_FILE."
-  read -r -p "Copy calibration to ${CAL_FINAL_PATH}? [Y/n] " response
+  read -r -p "Use this calibration? [Y/n] " response
   response=${response,,}    # tolower
   if [[ $response =~ ^(no|n)$ ]]; then
     echo "Skipping."
