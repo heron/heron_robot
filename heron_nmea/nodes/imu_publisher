@@ -23,10 +23,11 @@ class RawIMU(TxHelper):
     # Must convert these values:
     #  ROS frame: X forward, Y to port, Z up
     #  Sea frame: X forward, Y to starboard, Z down
-    base_av = self.tf_listener.transformVector3("/base_link",
+    base_av = self.tf_listener.transformVector3(namespace + "base_link",
             Vector3Stamped(msg.header, msg.angular_velocity))
-    base_la = self.tf_listener.transformVector3("/base_link",
+    base_la = self.tf_listener.transformVector3(namespace + "base_link",
             Vector3Stamped(msg.header, msg.linear_acceleration))
+
     self.tx(self.gps_time(msg.header.stamp),
         degrees(base_av.vector.x),
         -degrees(base_av.vector.y),
@@ -45,7 +46,7 @@ class RawCompass(TxHelper):
     self.tf_listener = tf_listener
 
   def _cb(self, msg):
-    base_imu = self.tf_listener.transformQuaternion("/base_link",
+    base_imu = self.tf_listener.transformQuaternion(namespace + "base_link",
             QuaternionStamped(msg.header, msg.orientation))
     roll, pitch, heading = sea_rpy_from_quaternion(base_imu.quaternion)
 
@@ -56,11 +57,14 @@ class RawCompass(TxHelper):
         degrees(roll),
         self.gps_time(msg.header.stamp))
 
-
+namespace = ""
 if __name__ == "__main__":
   rospy.init_node('nmea_imu')
+
+  namespace = rospy.get_param("~namespace", "") + "/"
+
   tf_listener = TransformListener()
-  tf_listener.waitForTransform("/base_link", "/imu_link", rospy.Time(), rospy.Duration(10.0))
+  tf_listener.waitForTransform(namespace + "base_link", namespace + "imu_link", rospy.Time(), rospy.Duration(10.0))
   sleep(1.0)
   RawCompass(tf_listener)
   RawIMU(tf_listener)

@@ -41,31 +41,35 @@
 #include "heron_msgs/Drive.h"
 #include "heron_msgs/Helm.h"
 #include "nmea_msgs/Sentence.h"
-#include "std_msgs/Bool.h"
+#include "heron_controller/ActivateControl.h"
 #include "ros/ros.h"
 
 // Boost provides functions for these, but they're a pain in the butt.
 static const double TO_RADIANS = 3.14159265359 / 180.0;
 static const double TO_DEGREES = 180.0 / 3.14159265359;
 
-
 class Helper
 {
 public:
   typedef boost::function<void(const ros::V_string&)> callback_fn_t;
 
-  Helper(ros::NodeHandle* nh, std::string sentence_type, callback_fn_t callback_fn) :
+  Helper(ros::NodeHandle* nh, std::string sentence_type, callback_fn_t callback_fn, ros::ServiceClient controls) :
     sentence_type_(sentence_type),
     callback_fn_(callback_fn),
-    sub_(nh->subscribe("rx" /*"nmea_sentence"*/, 1, &Helper::cb, this))
+    sub_(nh->subscribe("rx" /*"nmea_sentence"*/, 1, &Helper::cb, this)),
+    controls_(controls)
   {
   }
 
 private:
+
+
   void cb(const nmea_msgs::Sentence& sentence_msg)
   {
     ROS_DEBUG_STREAM("Sentence received: " << sentence_msg.sentence);
+
     boost::smatch matches;
+
     if (!boost::regex_match(sentence_msg.sentence, matches, sentence_regex))
     {
       ROS_WARN("Sentence recieved did not match regex.");
@@ -98,6 +102,10 @@ private:
   std::string sentence_type_;
   callback_fn_t callback_fn_;
   ros::Subscriber sub_;
+
+protected:
+  ros::ServiceClient controls_;
+  heron_controller::ActivateControl srv_;
 };
 
 /**
@@ -111,15 +119,21 @@ const boost::regex Helper::sentence_regex("^\\$([A-Za-z]+),([A-Za-z0-9,.-]+)\\*(
 class DrivePublisher : public Helper
 {
 public:
-  DrivePublisher(ros::NodeHandle* nh) :
-    Helper(nh, "PYDIR", boost::bind(&DrivePublisher::cb, this, _1)),
+  DrivePublisher(ros::NodeHandle* nh, ros::ServiceClient controls) :
+    Helper(nh, "PYDIR", boost::bind(&DrivePublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Drive>("cmd_drive", 1))
   {
+    srv_.request.set_active = false;
   }
 
 private:
+
   void cb(const ros::V_string& fields)
   {
+    if (!controls_.call(srv_)) {
+      ROS_ERROR("Failed to disable heron_controller algorithms");
+    }//if
+
     heron_msgs::Drive drive_msg;
     drive_msg.left = boost::lexical_cast<double>(fields[0]) * 0.01;
     drive_msg.right = boost::lexical_cast<double>(fields[1]) * 0.01;
@@ -133,15 +147,17 @@ private:
 class HelmPublisher : public Helper
 {
 public:
-  HelmPublisher(ros::NodeHandle* nh) :
-    Helper(nh, "PYDEP", boost::bind(&HelmPublisher::cb, this, _1)),
+  HelmPublisher(ros::NodeHandle* nh, ros::ServiceClient controls) :
+    Helper(nh, "PYDEP", boost::bind(&HelmPublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Helm>("cmd_helm", 1))
   {
+    srv_.request.set_active = true;
   }
 
 private:
   void cb(const ros::V_string& fields)
   {
+
     heron_msgs::Helm helm_msg;
     helm_msg.yaw_rate = boost::lexical_cast<double>(fields[0]) * TO_RADIANS * -1;
     helm_msg.thrust = boost::lexical_cast<double>(fields[1]) * 0.01;
@@ -155,16 +171,19 @@ private:
 class CoursePublisher : public Helper
 {
 public:
-  CoursePublisher(ros::NodeHandle* nh) :
-    Helper(nh, "PYDEV", boost::bind(&CoursePublisher::cb, this, _1)),
+  CoursePublisher(ros::NodeHandle* nh, ros::ServiceClient controls) :
+    Helper(nh, "PYDEV", boost::bind(&CoursePublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Course>("cmd_course", 1))
   {
+    srv_.request.set_active = true;
   }
 
 private:
   void cb(const ros::V_string& fields)
   {
+
     heron_msgs::Course course_msg;
+
     course_msg.yaw = (90 - boost::lexical_cast<double>(fields[0])) * TO_RADIANS;
     course_msg.speed = boost::lexical_cast<double>(fields[1]);
     pub_.publish(course_msg);
@@ -177,8 +196,8 @@ private:
 class LightsPublisher : public Helper
 {
 public:
-  LightsPublisher(ros::NodeHandle* nh) :
-    Helper(nh, "PYCLT", boost::bind(&LightsPublisher::cb, this, _1)),
+  LightsPublisher(ros::NodeHandle* nh, ros::ServiceClient controls) :
+    Helper(nh, "PYCLT", boost::bind(&LightsPublisher::cb, this, _1), controls),
     pub_(nh->advertise<std_msgs::Bool>("disable_lights", 1))
   {
   }
@@ -199,9 +218,17 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "heron_nmea_command_publisher");
 
   ros::NodeHandle nh;
-  DrivePublisher dp(&nh);
-  HelmPublisher hp(&nh);
-  CoursePublisher cp(&nh);
-  LightsPublisher lp(&nh);
+  ros::NodeHandle prv_nh("~");
+
+  std::string name_space;
+  prv_nh.param<std::string>("namespace", name_space, "");
+  name_space = "/" + name_space;
+
+  ros::ServiceClient active_controls = nh.serviceClient<heron_controller::ActivateControl>(name_space + "/activate_control");
+
+  DrivePublisher dp(&nh, active_controls);
+  HelmPublisher hp(&nh, active_controls);
+  CoursePublisher cp(&nh, active_controls);
+  LightsPublisher lp(&nh, active_controls);
   ros::spin();
 }
