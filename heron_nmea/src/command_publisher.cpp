@@ -41,7 +41,8 @@
 #include "heron_msgs/Drive.h"
 #include "heron_msgs/Helm.h"
 #include "nmea_msgs/Sentence.h"
-#include "heron_controller/ActivateControl.h"
+#include "std_msgs/Bool.h"
+#include "std_srvs/SetBool.h"
 #include "ros/ros.h"
 
 // Boost provides functions for these, but they're a pain in the butt.
@@ -105,7 +106,7 @@ private:
 
 protected:
   ros::ServiceClient controls_;
-  heron_controller::ActivateControl srv_;
+  std_srvs::SetBool srv_;
 };
 
 /**
@@ -123,7 +124,7 @@ public:
     Helper(nh, "PYDIR", boost::bind(&DrivePublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Drive>("cmd_drive", 1))
   {
-    srv_.request.set_active = false;
+    srv_.request.data = false;
   }
 
 private:
@@ -151,7 +152,7 @@ public:
     Helper(nh, "PYDEP", boost::bind(&HelmPublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Helm>("cmd_helm", 1))
   {
-    srv_.request.set_active = true;
+    srv_.request.data = true;
   }
 
 private:
@@ -175,7 +176,7 @@ public:
     Helper(nh, "PYDEV", boost::bind(&CoursePublisher::cb, this, _1), controls),
     pub_(nh->advertise<heron_msgs::Course>("cmd_course", 1))
   {
-    srv_.request.set_active = true;
+    srv_.request.data = true;
   }
 
 private:
@@ -224,7 +225,7 @@ int main(int argc, char **argv) {
   prv_nh.param<std::string>("namespace", name_space, "");
   name_space = "/" + name_space;
 
-  ros::ServiceClient active_controls = nh.serviceClient<heron_controller::ActivateControl>(name_space + "/activate_control");
+  ros::ServiceClient active_controls = nh.serviceClient<std_srvs::SetBool>(name_space + "/activate_control");
 
   DrivePublisher dp(&nh, active_controls);
   HelmPublisher hp(&nh, active_controls);

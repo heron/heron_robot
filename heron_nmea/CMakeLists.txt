@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(heron_nmea)
 
-find_package(catkin REQUIRED COMPONENTS rospy roscpp nmea_msgs geometry_msgs heron_msgs std_msgs)
+find_package(catkin REQUIRED COMPONENTS rospy roscpp nmea_msgs geometry_msgs heron_msgs std_msgs std_srvs)
 
 find_package(Boost REQUIRED)
 
