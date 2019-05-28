@@ -40,11 +40,13 @@ namespace = args.namespace
 
 if namespace is not "/" and namespace is not "":
     namespace += "/"
+if namespace == "/":
+    namespace = ""
 
 bag = rosbag.Bag(args.bag)
 imu_rot = Quaternion(0,0,0,1)
 transform_found = False
-for topic, msg, time in bag.read_messages(topics=("/tf", "/tf")):
+for topic, msg, time in bag.read_messages(topics=("/tf_static", "/tf_static")):
         for c_trans in msg.transforms:
 		if ((namespace + "base_link") in c_trans.header.frame_id and (namespace + "imu_link") in c_trans.child_frame_id):
 			imu_rot = c_trans.transform.rotation

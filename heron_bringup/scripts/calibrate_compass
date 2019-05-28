@@ -27,7 +27,7 @@ if [[ "$?" != "0" ]]; then
   exit 1
 fi
 
-rosbag record /tf $ROBOT_NAMESPACE/imu/rpy $ROBOT_NAMESPACE/imu/data $ROBOT_NAMESPACE/imu/mag -O $BAG_FILE --duration $DURATION &
+rosbag record /tf_static $ROBOT_NAMESPACE/imu/rpy $ROBOT_NAMESPACE/imu/data $ROBOT_NAMESPACE/imu/mag -O $BAG_FILE --duration $DURATION &
 ROSBAG_PID=$!
 echo "Started rosbag record, duration $DURATION seconds, pid [${ROSBAG_PID}]"
 
@@ -55,6 +55,10 @@ echo "Waiting for rosbag to shut down."
 sleep 2
 
 echo "Computing magnetic calibration."
+
+if [ -z $ROBOT_NAMESPACE ]; then
+  ROBOT_NAMESPACE=/
+fi
 
 rosrun heron_bringup compute_calibration $BAG_FILE $CAL_FILE $ROBOT_NAMESPACE &> /tmp/compute_output.log
 
