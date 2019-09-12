@@ -18,7 +18,7 @@
 
     <group if="$(optenv USE_SNMP_CHECK_NODE true)">
       <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
-        <param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
+        <param name="~ip_addr" value="$(optenv SNMP_IP 192.168.131.50)" />
       </node>
     </group>
 
@@ -27,9 +27,9 @@
     </group>
 
     <group if="$(eval arg('namespace') == '')">
-     <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
+     <node pkg="um7" type="um7_driver" name="um7_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
-       <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
+       <param name="/um7_driver/port" value="$(optenv HERON_IMU_PORT /dev/clearpath/imu)" />
        <remap from="imu/data" to="imu/data_raw" />
        <param name="lt_model" value="true" />
        <param name="linear_acceleration_stdev" value="0.38" />
@@ -38,9 +38,9 @@
     </group>
 
     <group unless="$(eval arg('namespace') == '')">
-     <node pkg="um6" type="um6_driver" name="um6_driver" output="screen">
+     <node pkg="um7" type="um7_driver" name="um7_driver" output="screen">
        <param name="tf_ned_to_enu" value="true"/>
-       <param name="/um6_driver/port" value="$(optenv HERON_IMU_UM6_PORT /dev/clearpath/imu)" />
+       <param name="/um7_driver/port" value="$(optenv HERON_IMU_PORT /dev/clearpath/imu)" />
        <remap from="imu/data" to="imu/data_raw" />
        <param name="lt_model" value="true" />
        <param name="linear_acceleration_stdev" value="0.38" />
@@ -49,7 +49,7 @@
     </group>
 
     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
-  	  <rosparam file="$(env HERON_MAG_CONFIG)" />
+      <rosparam file="$(env HERON_MAG_CONFIG)" />
       <param name="~use_magnetic_field_msg" value="false" />
       <param name="world_frame" value="enu" />
       <param name="publish_tf" value="false" />

@@ -36,7 +36,7 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
   <!-- Optional LMS1xx-series LIDAR, typically front-facing. -->
   <group if="$(optenv HERON_LASER 0)">
     <node pkg="lms1xx" name="lms1xx" type="LMS1xx_node">
-      <param name="host" value="$(optenv HERON_LASER_HOST 192.168.1.14)" />
+      <param name="host" value="$(optenv HERON_LASER_HOST 192.168.131.20)" />
       <param name="frame_id" value="$(optenv HERON_LASER_MOUNT front)_laser" />
       <remap from="scan" to="$(optenv HERON_LASER_TOPIC front/scan)" />
     </node>
@@ -44,7 +44,7 @@ in the URDF. See heron_description/urdf/accessories.urdf.xacro.
 
   <!-- Optional Axis P5514 PTZ camera, typically front-facing. -->
   <group if="$(optenv HERON_AXIS_PTZ 0)"  ns="$(optenv HERON_AXIS_PTZ_NAME axis_ptz)">
-    <param name="hostname" value="$(optenv HERON_AXIS_PTZ_HOST 192.168.1.13)" />
+    <param name="hostname" value="$(optenv HERON_AXIS_PTZ_HOST 192.168.131.20)" />
     <param name="width" value="$(optenv HERON_AXIS_PTZ_WIDTH 1280)" />
     <param name="height" value="$(optenv HERON_AXIS_PTZ_HEIGHT 720)" />
 
