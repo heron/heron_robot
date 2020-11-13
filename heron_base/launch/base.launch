@@ -49,7 +49,7 @@
     </group>
 
     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick">
-  	  <rosparam file="$(env HERON_MAG_CONFIG)" />
+      <rosparam file="$(env HERON_MAG_CONFIG)" />
       <param name="~use_magnetic_field_msg" value="false" />
       <param name="world_frame" value="enu" />
       <param name="publish_tf" value="false" />
