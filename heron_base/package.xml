@@ -22,9 +22,11 @@
   <run_depend>nmea_msgs</run_depend>
   <run_depend>nmea_comms</run_depend>
   <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>ros_mscl</run_depend>
   <run_depend>rosserial_python</run_depend>
   <run_depend>rosserial_server</run_depend>
   <run_depend>tf</run_depend>
+  <run_depend>um6</run_depend>
   <run_depend>heron_control</run_depend>
   <run_depend>wireless_watcher</run_depend>
   <run_depend>imu_filter_madgwick</run_depend>
