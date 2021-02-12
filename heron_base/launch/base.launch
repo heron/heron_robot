@@ -28,14 +28,25 @@
 
     <group unless="$(optenv HERON_IMU_UM6 0)">
       <!-- newer herons use the microstrain CM5-25 IMU -->
-      <include filename="$(find ros_mscl)/launch/microstrain.launch">
-        <arg name="name"          value="cv5" />
-        <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" /> <!-- TODO - verify the correct default -->
-        <arg name="imu_frame_id"  value="imu_link" />
-        <!-- TODO - double-check topic names -->
-        <remap from="cv5/data"    to="imu/raw_raw" />
-        <remap from="cv5/mag"     to="imu/mag" />
-      </include>
+      <group if="$(eval arg('namespace') == '')">
+        <include filename="$(find ros_mscl)/launch/microstrain.launch">
+          <arg name="name"          value="cv5" />
+          <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
+          <arg name="imu_frame_id"  value="imu_link" />
+          <remap from="cv5/data"    to="imu/raw_raw" />
+          <remap from="cv5/mag"     to="imu/mag" />
+        </include>
+      </group>
+
+      <group unless="$(eval arg('namespace') == '')">
+        <include filename="$(find ros_mscl)/launch/microstrain.launch">
+          <arg name="name"          value="cv5" />
+          <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
+          <arg name="imu_frame_id"  value="$(arg namespace)/imu_link" />
+          <remap from="cv5/data"    to="imu/raw_raw" />
+          <remap from="cv5/mag"     to="imu/mag" />
+        </include>
+      </group>
     </group>
     <group if="$(optenv HERON_IMU_UM6 0)">
       <!-- older herons use the UM6 IMU -->
