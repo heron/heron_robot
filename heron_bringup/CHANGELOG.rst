@@ -2,8 +2,8 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.6 (2021-02-12)
+------------------
 * Replace now-defunct UM6 as default, use CV5-25 instead, as-per RPSW-661 (`#10 <https://github.com/heron/heron_robot/issues/10>`_)
   * Remove all references to the now-defunct UM6, as-per RPSW-661
   * Add the Microstrain CV5 launch configuration as the new default. We're going to move forward and publish the driver off our own build farm, so depending on it shouldn't cause long-term issues (though it won't work right now)

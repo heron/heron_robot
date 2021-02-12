@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>heron_bringup</name>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
   <description>
     Provides upstart setup for Heron, and launch files for the standard
     configuration. Also provides configuration for u-blox GPS receiver

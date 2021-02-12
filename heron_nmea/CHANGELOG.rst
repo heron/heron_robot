@@ -2,8 +2,8 @@
 Changelog for package heron_nmea
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.6 (2021-02-12)
+------------------
 * [heron_nmea] Switched to std_srvs. (`#7 <https://github.com/heron/heron_robot/issues/7>`_)
 * Update to NMEA package to work with the other new packages (`#6 <https://github.com/heron/heron_robot/issues/6>`_)
   * Added possibility of custom namespace into heron_nmea
