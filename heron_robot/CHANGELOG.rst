@@ -2,6 +2,11 @@
 Changelog for package heron_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added Ceepulse sonar accessory.
+* Contributors: Tony Baltovski
+
 0.1.5 (2016-08-03)
 ------------------
 
