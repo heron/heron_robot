@@ -32,23 +32,23 @@
     <group unless="$(optenv HERON_IMU_UM6 0)">
       <!-- newer herons use the microstrain CM5-25 IMU -->
       <group if="$(eval arg('namespace') == '')">
-        <include filename="$(find ros_mscl)/launch/microstrain.launch">
+        <include file="$(find ros_mscl)/launch/microstrain.launch">
           <arg name="name"          value="cv5" />
           <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
           <arg name="imu_frame_id"  value="imu_link" />
-          <remap from="cv5/data"    to="imu/raw_raw" />
-          <remap from="cv5/mag"     to="imu/mag" />
         </include>
+        <node pkg="topic_tools" type="relay" name="cv5_imu_relay" args="/cv5/imu/data /imu/data_raw" />
+        <node pkg="topic_tools" type="relay" name="cv5_mag_relay" args="/cv5/mag /imu/mag" />
       </group>
 
       <group unless="$(eval arg('namespace') == '')">
-        <include filename="$(find ros_mscl)/launch/microstrain.launch">
+        <include file="$(find ros_mscl)/launch/microstrain.launch">
           <arg name="name"          value="cv5" />
           <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
           <arg name="imu_frame_id"  value="$(arg namespace)/imu_link" />
-          <remap from="cv5/data"    to="imu/raw_raw" />
-          <remap from="cv5/mag"     to="imu/mag" />
         </include>
+        <node pkg="topic_tools" type="relay" name="cv5_imu_relay" args="$(arg namespace)/cv5/imu/data $(arg namespace)/imu/data_raw" />
+        <node pkg="topic_tools" type="relay" name="cv5_mag_relay" args="$(arg namespace)/cv5/mag $(arg namespace)/imu/mag" />
       </group>
     </group>
     <group if="$(optenv HERON_IMU_UM6 0)">
