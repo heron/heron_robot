@@ -36,6 +36,7 @@
           <arg name="name"          value="cv5" />
           <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
           <arg name="imu_frame_id"  value="imu_link" />
+          <arg name="use_enu_frame" value="true" />
         </include>
         <node pkg="topic_tools" type="relay" name="cv5_imu_relay" args="/cv5/imu/data /imu/data_raw" />
         <node pkg="topic_tools" type="relay" name="cv5_mag_relay" args="/cv5/mag /imu/mag" />
@@ -46,6 +47,7 @@
           <arg name="name"          value="cv5" />
           <arg name="port"          value="$(optenv HERON_IMU_PORT /dev/microstrain)" />
           <arg name="imu_frame_id"  value="$(arg namespace)/imu_link" />
+          <arg name="use_enu_frame" value="true" />
         </include>
         <node pkg="topic_tools" type="relay" name="cv5_imu_relay" args="$(arg namespace)/cv5/imu/data $(arg namespace)/imu/data_raw" />
         <node pkg="topic_tools" type="relay" name="cv5_mag_relay" args="$(arg namespace)/cv5/mag $(arg namespace)/imu/mag" />
