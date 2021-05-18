@@ -31,6 +31,7 @@
   <run_depend>wireless_watcher</run_depend>
   <run_depend>imu_filter_madgwick</run_depend>
   <run_depend>python-pysnmp</run_depend>
+  <run_depend>topic_tools</run_depend>
 
   <export>
   </export>
