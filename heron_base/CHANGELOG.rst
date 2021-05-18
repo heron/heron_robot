@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.7 (2021-05-18)
+------------------
 * Fix bugs related to the switch to CV5 (`#11 <https://github.com/heron/heron_robot/issues/11>`_)
   * Use relays instead of remap; remap doesn't work in an include.  Add additional necessary dependencies
   * Set the IMU to operate in ENU mode instead of the default NED
