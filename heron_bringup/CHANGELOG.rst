@@ -2,6 +2,9 @@
 Changelog for package heron_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.6 (2021-02-12)
 ------------------
 * Replace now-defunct UM6 as default, use CV5-25 instead, as-per RPSW-661 (`#10 <https://github.com/heron/heron_robot/issues/10>`_)

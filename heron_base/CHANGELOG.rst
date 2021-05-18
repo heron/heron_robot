@@ -2,6 +2,14 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix bugs related to the switch to CV5 (`#11 <https://github.com/heron/heron_robot/issues/11>`_)
+  * Use relays instead of remap; remap doesn't work in an include.  Add additional necessary dependencies
+  * Set the IMU to operate in ENU mode instead of the default NED
+  * Rename the microstrain nodes to use "imu" instead of "cv5" to be more universal
+* Contributors: Chris I-B
+
 0.1.6 (2021-02-12)
 ------------------
 * Replace now-defunct UM6 as default, use CV5-25 instead, as-per RPSW-661 (`#10 <https://github.com/heron/heron_robot/issues/10>`_)
