@@ -29,7 +29,7 @@ from std_msgs.msg import Bool
 from pysnmp.hlapi import *
 
 status = False
-ip_addr = "192.168.1.9"
+ip_addr = "192.168.131.50"   # default base-station address
 
 
 #function to ping SNMP device manager

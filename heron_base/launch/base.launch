@@ -21,12 +21,12 @@
 
     <group if="$(optenv USE_SNMP_CHECK_NODE true)">
       <node pkg="heron_base" type="snmp_lights.py" name="wifi_lights">
-        <param name="~ip_addr" value="$(optenv SNMP_IP 192.168.1.9)" />
+        <param name="~ip_addr" value="$(optenv SNMP_IP 192.168.131.50)" />
       </node>
     </group>
 
     <group unless="$(optenv USE_SNMP_CHECK_NODE true)">
-        <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
+      <node ns="wireless" pkg="wireless_watcher" name="wireless_watcher" type="watcher_node" respawn="true" />
     </group>
 
     <group unless="$(optenv HERON_IMU_UM6 0)">
