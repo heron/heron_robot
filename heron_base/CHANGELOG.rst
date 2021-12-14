@@ -2,6 +2,11 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add the no-wireless lights script to the install targets
+* Contributors: Chris Iverach-Brereton
+
 0.1.8 (2021-12-14)
 ------------------
 * Add support for a HERON_NO_WIRELESS envar to completely disable checking for wireless connectivity; if enabled, just tell the MCU the wireless is fine and suppress the slow-2-pulse
