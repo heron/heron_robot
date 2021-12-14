@@ -2,6 +2,12 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add support for a HERON_NO_WIRELESS envar to completely disable checking for wireless connectivity; if enabled, just tell the MCU the wireless is fine and suppress the slow-2-pulse
+* Change the default IP address for the SNMP check to be the actual address of the base-station.
+* Contributors: Chris I-B, Chris Iverach-Brereton, Tony Baltovski
+
 0.1.7 (2021-05-18)
 ------------------
 * Fix bugs related to the switch to CV5 (`#11 <https://github.com/heron/heron_robot/issues/11>`_)

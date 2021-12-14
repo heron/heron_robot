@@ -2,6 +2,9 @@
 Changelog for package heron_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.7 (2021-05-18)
 ------------------
 * Fix bugs related to the switch to CV5 (`#11 <https://github.com/heron/heron_robot/issues/11>`_)
