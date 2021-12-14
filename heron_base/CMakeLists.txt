@@ -7,6 +7,7 @@ catkin_package()
 
 catkin_install_python(PROGRAMS
    scripts/snmp_lights.py
+   scripts/no_wireless_lights.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
