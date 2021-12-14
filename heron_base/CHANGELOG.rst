@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.8 (2021-12-14)
+------------------
 * Add support for a HERON_NO_WIRELESS envar to completely disable checking for wireless connectivity; if enabled, just tell the MCU the wireless is fine and suppress the slow-2-pulse
 * Change the default IP address for the SNMP check to be the actual address of the base-station.
 * Contributors: Chris I-B, Chris Iverach-Brereton, Tony Baltovski
