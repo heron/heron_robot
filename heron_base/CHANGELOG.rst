@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.9 (2021-12-14)
+------------------
 * Add the no-wireless lights script to the install targets
 * Contributors: Chris Iverach-Brereton
 
