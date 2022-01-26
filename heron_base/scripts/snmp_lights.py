@@ -22,44 +22,29 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import rospy
+import subprocess
 import threading
 import time
 from std_msgs.msg import Bool
-from pysnmp.hlapi import *
+
+FNULL=open(os.devnull, 'w')
 
 status = False
 ip_addr = "192.168.131.50"   # default base-station address
 
-
-#function to ping SNMP device manager
+# ping the base station's IP address to make sure we're connected to it
 def ping():
     global status
 
-    #fetch sysObjectID from Device Manager
-    errorIndication, errorStatus, errorIndex, varBinds = next(getCmd(SnmpEngine(),
-      CommunityData('public', mpModel=0),
-      UdpTransportTarget((ip_addr, 161)),
-      ContextData(),
-      ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysObjectID', 0)))
-    )
+    command = ['ping', '-c', '1', ip_addr]
+    status = subprocess.call(command, stdout=FNULL, stderr=subprocess.STDOUT) == 0
 
-    # if error in connection, log the error and send "false" to wireless/connected topic
-    if errorIndication or errorStatus:
-    	status = False
-    	rospy.logerr("Ping to base station failed")
-
-    # if sysObjectID begins with 1.3.6.1.4.1.21703, this is a microhard device
-    # so we must be connected
-    elif str(varBinds[0][1]).startswith("1.3.6.1.4.1.21703"):
-    	status = True
-    	rospy.loginfo("Ping to base station succeeded")
-
-    # if objectID isn't what we want, this isn't a microhard device
-    # and something's wrong with WiFi
+    if status:
+        rospy.logdebug('Ping to base station {0} succeeded'.format(ip_addr))
     else:
-    	status = False
-    	rospy.logerr("Ping to base station failed")
+        rospy.logerr('Ping to base station {0} failed'.format(ip_addr))
 
 # task to continuously ping SNMP device manager
 def ping_loop():
