@@ -2,6 +2,11 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Refactor the base-station ping check to use a standard ping; the snmp check is consistently failing with our current configurations.
+* Contributors: Chris Iverach-Brereton, Tony Baltovski
+
 0.1.9 (2021-12-14)
 ------------------
 * Add the no-wireless lights script to the install targets
