@@ -2,8 +2,8 @@
 Changelog for package heron_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.10 (2022-01-26)
+-------------------
 * Refactor the base-station ping check to use a standard ping; the snmp check is consistently failing with our current configurations.
 * Contributors: Chris Iverach-Brereton, Tony Baltovski
 
